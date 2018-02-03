@@ -43,7 +43,7 @@ nu = mu / rho; %kinematic viscosity [W/s^2]
 alpha = k / (c_p * rho); %thermal diffusivity of atmosphere [m^2/s]
 
 % Motor Specifications
-P_rotor = 3277.5; %power required to run 1 rotor [W]
+P_rotor = 3342; %power required to run 1 rotor [W]
 eta = 0.75; %motor efficiency [fraction]
 m = 0.4425; %motor mass [kg]
 c_motor = 100; %approximate specific heat of motor (ranges from 15 to 420 for metals) [W/m*K]
@@ -64,6 +64,8 @@ T_mars = T_mars + 273.15; %convert to K
 T_motor = T_motor + 273.15; %convert to K
 
 Q_dot = P_motor * (1 - eta) - m * c_motor * deltaT / t; %required rate of heat transfer away from motor [W]
+
+
 
 A_noFin = 2 * pi * r * l + 2 * pi * r^2; %surface area of motor (no fins) [m^2]
 
