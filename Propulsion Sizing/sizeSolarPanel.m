@@ -1,4 +1,4 @@
-function [ m_panel ] = massSolarPanel( P_r, solar_flux )
+function [ area_panel, m_panel ] = sizeSolarPanel( P_r, solar_flux )
 % 
 % Description: 
 %   Calculate a mass estimate for solar panels based on required power output
@@ -15,15 +15,15 @@ function [ m_panel ] = massSolarPanel( P_r, solar_flux )
 %       
 
 % Constants
-  e = 0.275;                   % Efficiency factor
-  rp = 0.60;                   % Performance ratio
+  e = 0.35;                    % Efficiency factor
+  rp = 0.85;                   % Performance ratio
   cell_m_to_A_ratio = 0.84;    % Cell area to mass ratio [kg/m^2]
-  hardware_factor = 1.05;      % Increase mass estimate by a fixed percentage to account for attachment hardware
 
 
 % Calculations
-  m_panel =(P_r * cell_m_to_A_ratio)/(e * solar_flux * rp);
-  m_panel = hardware_factor * m_panel;     
+  area_panel = (P_r)/(e * solar_flux * rp);
+
+  m_panel = area_panel * cell_m_to_A_ratio;
 
 end
 

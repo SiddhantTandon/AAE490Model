@@ -1,4 +1,4 @@
-function [Mbat, Mrotors, Mmotors,cap_batt, mass_panel, radius_rotor, omega, P_mech_total, P_mech_one_motor] = radiusOpt(solidity, tipMach, Cdp, mass_total, radius_vector, numProp, flightTime, batteryVoltage, sun_time, solar_flux, h)
+function [Mbat, Mrotors, Mmotors,cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_mech_one_motor] = radiusOpt(solidity, tipMach, Cdp, mass_total, radius_vector, numProp, flightTime, batteryVoltage, sun_time, solar_flux, h)
 % This is a supplementary MATLAB code used to calculate the power required
 % for hover on Mars to size the required battery at various rotor radii.
 % Maximizing the remaining mass budget, we can find an optimal radius,
@@ -41,9 +41,9 @@ for j=1:length(radius_vector)    % Iterate through many rotor radii
     Mmotors(j) = (P_mech_one_motor(j)*7e-5 + 0.2135) * numProp * 2;                     % Rough correlation for motor mass 
                                                               % ^^^  Multiplied by 2 to achieve a more accurate estimation 
     % Find solar panel specs   
-    energy_batt(j) = cap_batt(j) * batteryVoltage;           % [W*hr]          
-    P_panel(j) = energy_batt(j) / sun_time;                  % [W]
-    mass_panel(j) = massSolarPanel(P_panel(j), solar_flux);  % [kg]
+    energy_batt(j) = cap_batt(j) * batteryVoltage;          % [W*hr]          
+    P_panel(j) = energy_batt(j) / (sun_time);                  % [W]
+    [ area_panel(j), mass_panel(j) ] = sizeSolarPanel(P_panel(j), solar_flux);  % [kg]
 
     Mrem(j) = mass_total - Mbat(j) - Mrotors(j) - Mmotors(j) - mass_panel(j);        % Remaining mass for structure/payload
     
@@ -63,10 +63,12 @@ Mbat = Mbat(i);
 Mrotors = Mrotors(i);
 Mmotors = Mmotors(i);
 mass_panel = mass_panel(i);
+area_panel = area_panel(i);
 cap_batt = cap_batt(i);
 radius_rotor = radius_vector(i);
 torque = torque(i);
 omega = omega(i);
 P_mech_total = P_mech_total(i);
 P_mech_one_motor = P_mech_one_motor(i);
+energy_batt = energy_batt(i)
 end
