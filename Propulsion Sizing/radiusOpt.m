@@ -1,4 +1,4 @@
-function [Mbat, Mrotors, Mmotors,cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_mech_one_motor] = radiusOpt(solidity, tipMach, Cdp, mass_total, radius_vector, numProp, flightTime, batteryVoltage, sun_time, solar_flux, h)
+function [Mbat, Mrotors, Mmotors,cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_elec_total] = radiusOpt(solidity, tipMach, Cdp, mass_total, radius_vector, numProp, flightTime, V_batt, motor_eff,  sun_time, solar_flux, h)
 % This is a supplementary MATLAB code used to calculate the power required
 % for hover on Mars to size the required battery at various rotor radii.
 % Maximizing the remaining mass budget, we can find an optimal radius,
@@ -35,13 +35,16 @@ for j=1:length(radius_vector)    % Iterate through many rotor radii
     P_mech_one_motor(j) = P_mech_total(j)/numProp;
     torque(j) = P_mech_total(j)/omega(j);
     
-    cap_batt(j) = capacityBattery( P_mech_total(j), batteryVoltage, flightTime_hr );     % Estimated battery capacity [A*hr]
-    Mbat(j) = massBattery( cap_batt(j), batteryVoltage );                          % Mass of the battery required
+    P_elec_total(j) = P_mech_total(j)/motor_eff;     % Convert from mechanical to electrical power
+    P_elec_one_motor(j) = P_mech_one_motor(j)/motor_eff;     % Convert from mechanical to electrical power
+    
+    cap_batt(j) = capacityBattery( P_elec_total(j), V_batt, flightTime_hr );     % Estimated battery capacity [A*hr]
+    Mbat(j) = massBattery( cap_batt(j), V_batt );                          % Mass of the battery required
     Mrotors(j) = numProp * rho_blade * t_blade * solidity * pi * radius_vector(j)^2;       % Mass of rotor blades
-    Mmotors(j) = (P_mech_one_motor(j)*7e-5 + 0.2135) * numProp * 2;                     % Rough correlation for motor mass 
+    Mmotors(j) = (P_elec_one_motor(j)*7e-5 + 0.2135) * numProp * 2;                     % Rough correlation for motor mass 
                                                               % ^^^  Multiplied by 2 to achieve a more accurate estimation 
     % Find solar panel specs   
-    energy_batt(j) = cap_batt(j) * batteryVoltage;          % [W*hr]          
+    energy_batt(j) = cap_batt(j) * V_batt;          % [W*hr]          
     P_panel(j) = energy_batt(j) / (sun_time);                  % [W]
     [ area_panel(j), mass_panel(j) ] = sizeSolarPanel(P_panel(j), solar_flux);  % [kg]
 
@@ -69,6 +72,6 @@ radius_rotor = radius_vector(i);
 torque = torque(i);
 omega = omega(i);
 P_mech_total = P_mech_total(i);
-P_mech_one_motor = P_mech_one_motor(i);
-energy_batt = energy_batt(i)
+P_elec_total = P_elec_total(i);
+energy_batt = energy_batt(i);
 end
