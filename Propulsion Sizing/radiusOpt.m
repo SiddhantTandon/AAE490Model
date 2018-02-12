@@ -24,7 +24,7 @@ powerFactor = 1.4;                % Increase power by a factor to account for fo
 for j=1:length(radius_vector)    % Iterate through many rotor radii 
     % Calculate induced power Pi per propeller
     Pid = thrust * sqrt( thrust / (2*rho*pi*(radius_vector(j)^2)) );      % Ideal hover power required 
-    Pi =  k*Pid / fig_merit;
+    Pi =  k*Pid; % Corrected this equation by removing FM
 
     % Calculate the power necessary to overcome drag on the blades Pp
     Vtip = tipMach * a; %Velocity at the tip
