@@ -72,8 +72,7 @@ function [ solar_energy_per_day ] = solarFlux(latitude, Ls, opticalDepth)
 
         Gh(progress) = 0;
         if (acosd(cosineZ) >= 0 && acosd(cosineZ) <= 90)
-            %Gh(progress) = solarFluxSurfaceAtmosphere * func * cosineZ / .9;
-            Gh(progress) = solarFluxSurfaceAtmosphere;
+            Gh(progress) = solarFluxSurfaceAtmosphere * func * cosineZ / .9;
         end
     end
     average = mean(Gh);
