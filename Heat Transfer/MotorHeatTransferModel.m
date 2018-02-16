@@ -44,7 +44,7 @@ alpha = k / (c_p * rho); %thermal diffusivity of atmosphere [m^2/s]
 
 % Motor Specifications
 P_rotor = 3342; %power required to run 1 rotor [W]
-eta = 0.75; %motor efficiency [fraction]
+eta = 0.85; %motor efficiency [fraction]
 m = 0.4425; %motor mass [kg]
 c_motor = 100; %approximate specific heat of motor (ranges from 15 to 420 for metals) [W/m*K]
 r = 0.05; %motor radius [m]
