@@ -1,4 +1,4 @@
-function [ solar_energy_per_day ] = solarFlux(latitude, Ls, opticalDepth)
+function [ solar_energy_per_day ] = solarFlux(latitude, Ls)
 % Description: 
 %   Calculate a solar flux estimate (in Joules/day) based on factors including latitude,
 %   dust levels, Mars' distance from sun
@@ -20,13 +20,13 @@ function [ solar_energy_per_day ] = solarFlux(latitude, Ls, opticalDepth)
 % Constants
     sFlux0 = 590;                   % Solar irradiance at Mars' mean distance from Sun [W/m^2]
     P = 88775;                      % Number of seconds in Martian sol [seconds]
-    latitude = 60;                  % mission latitude [degrees or radians, figure this out]
+    %latitude = 60;                  % mission latitude [degrees or radians, figure this out]
     eccentricity = 0.093377;        % Mars' planetary orbit eccentricity [no unit]
     LsP = 248;                      % Aerocentric longitude at perihelion (when Mars' is closest to Sun) [degrees]... to get 249.5, took average of values forund on http://www-mars.lmd.jussieu.fr/mars/time/solar_longitude.html and the site under assumptions
-    Ls = 135;                       % Mars current solar longitude (0 to 360 [degrees] based on orbital position and date... this can be calculated online)
+    %Ls = 135;                       % Mars current solar longitude (0 to 360 [degrees] based on orbital position and date... this can be calculated online)
     % t = 22500;                      % Time past noon [seconds]
     E = 24.936;                     % Mars obliquity [degrees]
-    opticalDepth = 2;
+    opticalDepth = 2;               % based on dust levels (typically about .5) [no unit]
 
 % Tables of Constants 
     opDepthTable = [.1 .2 .3 .4 .5 .6 .7 .8 .9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.25 2.50 2.75 3 3.25 3.5 4 5 6];
