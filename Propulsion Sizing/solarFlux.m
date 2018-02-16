@@ -70,8 +70,8 @@ function [ energy ] = solarEnergyPerDay(latitude, Ls, opticalDepth)
         if (zenithAngle >= 0 && zenithAngle <= 90) % solar radiation only available during the day, which is when zenith angle is 0-90
             Gh(progress) = solarFluxSurfaceAtmosphere * func * cosineZ /.9;
         end
-        plot(Gh)
+        % plot(Gh) % optional plot of flux throughout day
     end
     energy = mean(Gh)* P; % average flux throughout day * length of day gives total energy for the day
-    %fprintf('%f Joules/m^2 * day', energy) optional print statement
+    %fprintf('%f Joules/m^2 * day', energy) % optional print statement
 end
