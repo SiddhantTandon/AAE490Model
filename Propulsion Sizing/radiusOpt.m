@@ -15,7 +15,8 @@ powerFactor = 1.4;                % Increase power by a factor to account for fo
     t_blade = 0.02;     % average thickness of rotor blades [m]
     fig_merit = 0.75;   % Figure of Merit (= P_ideal/P_hover)
     k = 1.2;            % Aerodynamic correction factor
-
+    Idraw = 349.625;   % Current required by the motors [A]
+    
 % Constants
     a = 240;     % speed of sound, m/s
     g_m = 3.71;  % Gravity on mars, m/s^2
@@ -38,7 +39,7 @@ for j=1:length(radius_vector)    % Iterate through many rotor radii
     P_elec_total(j) = P_mech_total(j)/motor_eff;     % Convert from mechanical to electrical power
     P_elec_one_motor(j) = P_mech_one_motor(j)/motor_eff;     % Convert from mechanical to electrical power
     
-    cap_batt(j) = capacityBattery( P_elec_total(j), V_batt, flightTime_hr );     % Estimated battery capacity [A*hr]
+    cap_batt(j) = capacityBattery( P_elec_total(j), V_batt, flightTime_hr, Idraw );     % Estimated battery capacity [A*hr]
     Mbat(j) = massBattery( cap_batt(j), V_batt );                          % Mass of the battery required
     Mrotors(j) = numProp * rho_blade * t_blade * solidity * pi * radius_vector(j)^2;       % Mass of rotor blades
     Mmotors(j) = (P_elec_one_motor(j)*7e-5 + 0.2135) * numProp * 2;                     % Rough correlation for motor mass 
