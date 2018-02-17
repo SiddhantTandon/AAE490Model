@@ -23,16 +23,17 @@ function [ energy ] = solarEnergyPerDay(latitude, Ls, opticalDepth)
     eccentricity = 0.093377; % Mars' planetary orbit eccentricity [no unit]
     LsP = 248;               % Aerocentric longitude at perihelion (when Mars' is closest to Sun) [degrees]... to get 249.5, took average of values forund on http://www-mars.lmd.jussieu.fr/mars/time/solar_longitude.html and the site under assumptions
     E = 24.936;              % Mars obliquity [degrees]
-
+    step = 100;              % speeds up calculation but hurts accuracy a bit (probably about 1%)
+    
     % Calculations
     distanceRatio = (1 + eccentricity * cosd(Ls - LsP)) / (1 - eccentricity * eccentricity); % This distance ratio is confirmed to work, as it outputs a max ratio of 1.103, and 589.2 * 1.103 * 1.103 = 717
     solarDeclination = asind(sind(E) * sind(Ls));
-    for(t = -44387:1:44387) % goes from 1st second of the day to the last second of the day where 0 seconds is noon
+    for(t = -44387:step:44387) % goes from 1st second of the day to the last second of the day where 0 seconds is noon
         progress = t + 44388; % counter       
         h = (2 * pi * t) / P;
         cosineZ = (sind(latitude) * sind(solarDeclination)) + (cosd(latitude) * cosd(solarDeclination) * cos(h));
         zenithAngle = acosd(cosineZ);
-        solarFluxSurfaceAtmosphere = sFlux0 * cosineZ * distanceRatio * distanceRatio; % at top of atmosphere
+        solarFluxSurfaceAtmosphere = sFlux0 * distanceRatio * distanceRatio; % at top of atmosphere
         opDepthTable = [.1 .2 .3 .4 .5 .6 .7 .8 .9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.25 2.50 2.75 3 3.25 3.5 4 5 6];
         zenAngleTable = [0 10 20 30 40 50 60 70 80 85 90];
         valsTable = [.883 .883 .882 .880 .876 .870 .857 .830 .755 .635 0,
@@ -70,8 +71,8 @@ function [ energy ] = solarEnergyPerDay(latitude, Ls, opticalDepth)
         if (zenithAngle >= 0 && zenithAngle <= 90) % solar radiation only available during the day, which is when zenith angle is 0-90
             Gh(progress) = solarFluxSurfaceAtmosphere * func * cosineZ /.9;
         end
-        % plot(Gh) % optional plot of flux throughout day
+        plot(Gh)
     end
-    energy = mean(Gh)* P; % average flux throughout day * length of day gives total energy for the day
-    %fprintf('%f Joules/m^2 * day', energy) % optional print statement
+    energy = mean(Gh)* P * step; % average flux throughout day * length of day gives total energy for the day
+    %fprintf('%f Joules/m^2 * day', energy) optional print statement
 end
