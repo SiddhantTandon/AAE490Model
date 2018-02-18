@@ -12,6 +12,7 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
 %    day_length_hr: Length of daylight hours at the givin surface latitude [hr]
 % 
 % ASSUMPTIONS:
+%   Constant optical depth 
 %   Calculations performed based on equations found online  
 %       (http://ccar.colorado.edu/asen5050/projects/projects_2001/benoit/solar_irradiance_on_mars.htm)
 %        https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19890015158.pdf
@@ -19,12 +20,12 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
 % Constants
     time_step = 60;          % Time step in [sec]
 
-    sFlux0 = 589.2;            % Solar irradiance at Mars' mean distance from Sun [W/m^2]
+    sFlux0 = 589.2;          % Solar irradiance at Mars' mean distance from Sun [W/m^2]
     P = 88775;               % Number of seconds in Martian sol [seconds]
     eccentricity = 0.093377; % Mars' planetary orbit eccentricity [no unit]
     LsP = 248;               % Aerocentric longitude at perihelion (when Mars' is closest to Sun) [degrees]... to get 249.5, took average of values forund on http://www-mars.lmd.jussieu.fr/mars/time/solar_longitude.html and the site under assumptions
     E = 24.936;              % Mars obliquity [degrees]
-    opticalDepth = 0.5;      %  based on dust levels (typically about .5) [no unit]
+    opticalDepth = 0.5;      % Factor to account for dust levels[no unit] (lower = less dust and higher surface solar flux) 
     
     % Table constants
     opDepthTable = [.1 .2 .3 .4 .5 .6 .7 .8 .9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.25 2.50 2.75 3 3.25 3.5 4 5 6];
