@@ -26,8 +26,8 @@ function [ cap_batt ] = capacityBattery( P_draw, V_batt, t_run, Idraw )
 % Calculations
     % t_run = t_run / 60;    % Convert time from mins to hours (IF INPUT IS IN MINUTES)
 
-    %cap_batt_nom = (P_draw/V_batt) * t_run;    % [Amp * hr] = [W/V * hr]    (If the input is in Power draw)
-    cap_batt_nom = Idraw * t_run;    % [Amp * hr] = [W/V * hr] 
+    cap_batt_nom = (P_draw/V_batt) * t_run;    % [Amp * hr] = [W/V * hr]    (If the input is in Power draw)
+    %cap_batt_nom = Idraw * t_run;    % [Amp * hr] = [W/V * hr] 
     
     C = 1 / t_run;    %C rating [1/hours] = C/t_discharge, source: http://www.ecochemie.nl/download/Applicationnotes/Autolab_Application_Note_BAT02.pdf, and https://web.statler.wvu.edu/~wu/mae493/7-storage-2.pdf    
     %maxI = cap_batt_nom * C;  %max current the battery can produce

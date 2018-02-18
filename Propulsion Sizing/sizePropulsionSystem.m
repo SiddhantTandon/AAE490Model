@@ -29,12 +29,22 @@ clear;close all;clc
     num_days = 90;              % Number of Martian sols required to complete surveying area  
     drone_vert_rate = 2;        % [m/s]  Estimated ascent/descent rate of drone to/from cruise altitude
 
-% Solar Flux Parameters
-    sun_time = 12.33;  % Hours of useful sunlight on Martian surface [hr]
-    solar_flux = 400;  % Average solar flux on Martian surface (assumed constant) [W/m^2]      Source: http://ccar.colorado.edu/asen5050/projects/projects_2001/benoit/solar_irradiance_on_mars.htm     
+% Solar Flux Parameters 
+% Less desireable case:
+     mission_lat = 20;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
+     solar_lon = 70;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
+  
+% More desireable case:
+%     mission_lat = -15;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
+%     solar_lon = 250;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
+%    
+    
   
 %%%%%%%%%%%%%%%%%%%%%%%% CALCULATIONS %%%%%%%%%%%%%%%%%%%%%%%%
 
+% Calculate solar flux available with the given conditions  
+    [ solar_flux, sun_time ] = solarFlux(mission_lat, solar_lon);     % Average solar flux on Martian surface (assumed constant) [W/m^2] and % Hours of useful sunlight on Martian surface [hr]
+    
 % Find required flight time 
     t_cruise = cruiseTime(A_cover, h_cruise, v_cruise, sensor_fov, num_drones, num_days);     % Required Flight Time [min]
     t_flight = t_cruise + 2*(h_cruise/drone_vert_rate)/60;    % Add fixed number of minutes for climb/descent
