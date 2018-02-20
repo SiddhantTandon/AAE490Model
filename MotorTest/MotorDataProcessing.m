@@ -3,7 +3,7 @@ clc
 
 %% Load data from File
 
-fileName = '2_19_637pm.csv';
+fileName = '2_19_637pm.csv'; % 627, 629, 633, 635, 637
 sampleFreq = 1; %[samples/sec]
 
 %{
@@ -17,6 +17,7 @@ kv = str2double(line(8 : end));
 fclose(fileID);
 %}
 kv = 370;
+polesMotor = 14;
 
 % Skip initial info lines
 fileID = fopen(fileName);
@@ -40,6 +41,8 @@ rotRate = data(:, 7); %[rpm]
 time = sampleFreq * [0 : length(throttlePosition) - 1]';
 
 % Derived Data
+rotRate = rotRate / polesMotor;
+
 omega = 2 * pi * rotRate / 60; %rotation rate [rad/s]
 torque = powerDraw ./ omega; %torque provided [Nm]
 
