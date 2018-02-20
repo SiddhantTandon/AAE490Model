@@ -45,7 +45,7 @@ epsilon = 0.98; %motor surface emmisivity
 %alpha = k / (c_p * rho); %thermal diffusivity of atmosphere [m^2/s]
 
 % Motor Specifications
-P_rotor = 5578; %power required by 1 rotor [W]
+P_rotor = ; %power required by 1 rotor [W]
 eta = 0.85; %motor efficiency [fraction]
 m = 0.75; %motor mass [kg]
 c_motor = 100; %approximate specific heat of motor (ranges from 15 to 420 for metals) [W/m*K]
