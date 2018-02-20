@@ -1,0 +1,29 @@
+clear
+clc
+
+fileName = '2_19_627pm.csv';
+
+% Find KV from csv File
+fileID = fopen(fileName);
+line = '     ';
+while line(3:4) ~= 'KV'
+    line = fgetl(fileID);
+end
+kv = str2double(line(8 : end));
+fclose(fileID);
+
+% Load Sample Data
+sampleTime = 1;
+data = csvread(fileName, 13 - 1, 1 - 1);
+
+while line(1) == '#'
+    lineNum = 
+end
+
+
+throttlePosition = data(:, 1); % reading from throttle [ms]
+powerDraw = data(:, 2); %[W]
+voltage = data(:, 3); %[V]
+current = powerDraw ./ voltage; %[A] current reading doesn't work
+speed = data(:, 7); %[rpm]
+time = [0 : sampleTime * length(throttlePosition)];
