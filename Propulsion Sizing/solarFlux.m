@@ -1,7 +1,7 @@
 function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
 % Description: 
-%   Calculate a solar flux estimate (in Joules/day) based on factors including latitude,
-%   dust levels, Mars' distance from sun
+%   Calculate a solar flux estimate [W/m^2] and length of sunlight duration 
+%   in [hr] based on mission latitude and time of year
 %
 % Inputs:   
 %    latitude: Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) >> needs more testing on negative values
