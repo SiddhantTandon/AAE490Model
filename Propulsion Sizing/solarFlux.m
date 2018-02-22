@@ -81,7 +81,7 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
         zenithAngle = acosd(cosineZ(i));
         solarFluxSurfaceAtmosphere = sFlux0 * distanceRatio * distanceRatio; % at top of atmosphere
 
-        func = interp2(zenAngleTable, opDepth % Table, valsTable, zenithAngle, opticalDepth); % double interpolating table above to give a coefficient based on optical depth and zenith angle
+        func = interp2(zenAngleTable, opDepthTable, valsTable, zenithAngle, opticalDepth); % double interpolating table above to give a coefficient based on optical depth and zenith angle
 
         Flux(i) = 0; % Preliminarily, flux is set to zero at all times of day, as there is no flux at night
         if (zenithAngle >= 0 && zenithAngle <= 90) % solar radiation only available during the day, which is when zenith angle is 0-90
@@ -90,7 +90,7 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
     end    
 
     flux_avg = mean(Flux);           % [W/m^2]
-    day_length_hr = day_length_sec / 3600;     % [hr]
+    day_length_hr = day_length_sec / 3600; % [hr]
 
     % Total energy [J/m^2] = flux_avg [W/m^2] * day_length_sec [sec]
 
