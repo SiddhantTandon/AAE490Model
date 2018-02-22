@@ -6,20 +6,22 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
 % Inputs:   
 %    latitude: Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) >> needs more testing on negative values
 %    Ls (solar longitude): Angular position of Mars around the Sun [deg], based on time of year  (Range from 0 to 360 deg)
-%                           -> Ls = 0° corresponds to northern vernal equinox
+%                           -> Ls = 0Â° corresponds to northern vernal equinox
 % Outputs: 
 %    flux_avg: Average daily solar flux taken over only the daylight hours  [W/m^2]
 %    day_length_hr: Length of daylight hours at the givin surface latitude [hr]
 % 
 % ASSUMPTIONS:
 %   Constant optical depth 
+%       Actual example optical depth variance data can be found online at https://ac.els-cdn.com/0038092X90901567/1-s2.0-0038092X90901567-main.pdf?_tid=e4601e00-1412-11e8-97ae-00000aacb35e&acdnat=1518893389_33db73dec0e65a7bb93a15b7ea47f75a
 %   Calculations performed based on equations found online  
 %       (http://ccar.colorado.edu/asen5050/projects/projects_2001/benoit/solar_irradiance_on_mars.htm)
 %        https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19890015158.pdf
+%        Outputs flux 
 
 % Constants
     time_step = 60;          % Time step in [sec]
-
+    
     sFlux0 = 589.2;          % Solar irradiance at Mars' mean distance from Sun [W/m^2]
     P = 88775;               % Number of seconds in Martian sol [seconds]
     eccentricity = 0.093377; % Mars' planetary orbit eccentricity [no unit]
@@ -30,7 +32,7 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
     % Table constants
     opDepthTable = [.1 .2 .3 .4 .5 .6 .7 .8 .9 1 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2 2.25 2.50 2.75 3 3.25 3.5 4 5 6];
     zenAngleTable = [0 10 20 30 40 50 60 70 80 85 90];
-    valsTable = [.883 .883 .882 .880 .876 .870 .857 .830 .755 .635 0;      % Data Table Source: ???
+    valsTable = [.883 .883 .882 .880 .876 .870 .857 .830 .755 .635 0;      % Data Table Source: https://ac.els-cdn.com/0038092X90901567/1-s2.0-0038092X90901567-main.pdf?_tid=e4601e00-1412-11e8-97ae-00000aacb35e&acdnat=1518893389_33db73dec0e65a7bb93a15b7ea47f75a
                  .866 .865 .860 .858 .851 .836 .813 .758 .640 .470 0;
                  .847 .846 .841 .836 .826 .806 .774 .708 .562 .412 0;
                  .828 .827 .821 .815 .802 .778 .740 .667 .502 .373 0;
@@ -62,7 +64,7 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
     
     % Calculations
     distanceRatio = (1 + eccentricity * cosd(Ls - LsP)) / (1 - eccentricity * eccentricity); % This distance ratio is confirmed to work, as it outputs a max ratio of 1.103, and 589.2 * 1.103 * 1.103 = 717
-    solarDeclination = asind(sind(E) * sind(Ls));
+    solarDeclination = asind(sind(E) * sind(Ls)); % confirmed to work based on comparing graphs
     
     t_start = -P/(2*pi) * acos(-tand(latitude) * tand(solarDeclination));     % Calculate time of sunrise
     t_end = P/(2*pi) * acos(-tand(latitude) * tand(solarDeclination));        % Calculate time of sunset
@@ -79,11 +81,11 @@ function [ flux_avg, day_length_hr ] = solarFlux(latitude, Ls)
         zenithAngle = acosd(cosineZ(i));
         solarFluxSurfaceAtmosphere = sFlux0 * distanceRatio * distanceRatio; % at top of atmosphere
 
-        func = interp2(zenAngleTable, opDepthTable, valsTable, zenithAngle, opticalDepth); % double interpolating table above to give a coefficient based on optical depth and zenith angle
+        func = interp2(zenAngleTable, opDepth % Table, valsTable, zenithAngle, opticalDepth); % double interpolating table above to give a coefficient based on optical depth and zenith angle
 
-        Flux(i) = 0;
+        Flux(i) = 0; % Preliminarily, flux is set to zero at all times of day, as there is no flux at night
         if (zenithAngle >= 0 && zenithAngle <= 90) % solar radiation only available during the day, which is when zenith angle is 0-90
-            Flux(i) = solarFluxSurfaceAtmosphere * func * cosineZ(i) / 0.9;
+            Flux(i) = solarFluxSurfaceAtmosphere * func * cosineZ(i) / 0.9; % Equation for total flux on horizontal surface
         end
     end    
 
