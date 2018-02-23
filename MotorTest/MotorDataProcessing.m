@@ -1,6 +1,9 @@
 clear
 clc
 
+% preliminary rotor moment of inertia ~1 Nm
+% preliminary drag moment ~0.3 Nm
+
 %% Load data from File
 
 fileName = '2_19_637pm.csv'; % 627, 629, 633, 635, 637
@@ -38,16 +41,31 @@ powerDraw = data(:, 2); %[W]
 voltage = data(:, 3); %[V]
 current = powerDraw ./ voltage; %[A] current reading doesn't work
 rotRate = data(:, 7); %[rpm]
-time = sampleFreq * [0 : length(throttlePosition) - 1]';
+time = [0 : length(throttlePosition) - 1]' / sampleFreq;
 
-% Derived Data
+%% Derived Results
 rotRate = rotRate / polesMotor;
 
 omega = 2 * pi * rotRate / 60; %rotation rate [rad/s]
-torque = powerDraw ./ omega; %torque provided [Nm]
+
+torque = zeros(length(powerDraw), 1);
+for n = 1:length(powerDraw)
+    if omega(n) ~= 0
+        torque(n) = powerDraw(n) / omega(n); %torque provided [Nm]
+    else
+        torque(n) = 0;
+    end
+end
 
 throttle = (throttlePosition - 1.1) / (1.9 - 1.1) * 100; %level above min throttle / total throttle range [%]
 
+alpha = zeros(length(omega), 1);
+alpha(1) = (omega(1) - 0) * sampleFreq;
+for n = 2 : length(omega) - 1
+    alpha(n) = (omega(n+1) - omega(n)) * sampleFreq; %change in omega / time per sample
+end
+
+Iz = torque ./ alpha;
 
 %% Plot Results
 figure(1)
@@ -87,3 +105,15 @@ plot(time, torque)
 xlabel('time [s]')
 ylabel('Torque [Nm]')
 title('Torque vs. t')
+
+figure(2)
+plot(time(40:250), alpha(40:250))
+hold on
+plot(time(40:250), 10*torque(40:250))
+hold off
+xlabel('time [s]')
+ylabel('Angular Acceleration [rad/s^2]')
+title('Angular Acceleration vs. t')
+
+figure(3)
+plot(time, Iz)
