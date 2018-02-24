@@ -5,7 +5,7 @@ function [ volume_batt,num_series, num_parallel, total_cells ] = volBattery( cap
 %   previously calculated capacity
 %
 % Inputs:
-%   cap_batt - battery capacity in [A*hrs]
+%   cap_batt - battery cell capacity in [A*hrs]
 %   V_batt - voltage of the battery that is needed
 %
 % Outputs:
