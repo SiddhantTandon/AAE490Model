@@ -1,4 +1,4 @@
-function [ volume_batt, num_series, num_parallel, total_cells ] = volBattery(V_batt, P_elec_total, t_flight)
+function [ volume_batt, num_series, num_parallel, total_cells ] = volBattery(V_batt, P_elec_total, t_run)
 %
 % Description: 
 %   Calculate the volume of the resultant battery system based on the
@@ -13,8 +13,8 @@ function [ volume_batt, num_series, num_parallel, total_cells ] = volBattery(V_b
 %   num_parallel - number of (battery cell blocks in series) in parallel from resulting configuration
 %   total_cells - totall number of battery cells in resulting configuration
 
-cap_batt = 3; %AH
-E_req = P_elec_total * t_flight * 60; % [W]*[hr]* 3600[s/hr] = W*s = J
+cap_batt = 3 %AH
+E_req = P_elec_total * t_flight * 3600 % [W]*[hr]* 3600[s/hr] = W*s = J
 %For a 12S battery cell:
 S = 12;
 V_mean = 3.6; %[V]
