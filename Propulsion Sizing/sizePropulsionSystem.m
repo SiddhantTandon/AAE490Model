@@ -30,13 +30,13 @@ clear;close all;clc
     drone_vert_rate = 2;        % [m/s]  Estimated ascent/descent rate of drone to/from cruise altitude
 
 % Solar Flux Parameters 
-% Less desireable case:
-     mission_lat = 20;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
-     solar_lon = 70;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
-  
+% % Less desireable case:
+      mission_lat = 20;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
+      solar_lon = 70;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
+%   
 % More desireable case:
-%     mission_lat = -15;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
-%     solar_lon = 250;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
+%    mission_lat = -15;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
+%   solar_lon = 250;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
 %    
     
   

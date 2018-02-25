@@ -10,6 +10,7 @@ clear;close all;clc
 mission_lat = -90:5:90;      %range of vaules to be tested [deg]
 solar_lon = 0:5:360;
 
+year_days = linspace(1,668.6,length(solar_lon));      % Convert units of X axis to days instead of degrees 
 
 for i = 1:length(mission_lat)
     for j = 1:length(solar_lon)
@@ -25,25 +26,23 @@ for i = 1:length(mission_lat)
 end
 
 figure(1)
-contourf(solar_lon, mission_lat,solar_flux,100,'linecolor','none')
+contourf(year_days, mission_lat,solar_flux,100,'linecolor','none')
 colorbar
 title('Average Solar Flux [W/m^2] Contour Plot')
 ylabel('Surface Latitude [deg N]')
-xlabel('Solar Longitude [deg]')
+xlabel('Martian Sols After Vernal Equinox [Sols]')
 
 figure(2)
-contourf(solar_lon, mission_lat,sun_time,100,'linecolor','none')
+contourf(year_days, mission_lat,sun_time,100,'linecolor','none')
 colorbar
 title('Duration of Daylight [hr] Contour Plot')
 ylabel('Surface Latitude[deg N]')
-xlabel('Solar Longitude [deg]')
+xlabel('Martian Sols After Vernal Equinox [Sols]')
 
 figure(3)
 energy_avail = solar_flux .* sun_time .* 3600;   % [J/m^2]
-contourf(solar_lon, mission_lat,energy_avail,100,'linecolor','none')
+contourf(year_days, mission_lat,energy_avail,100,'linecolor','none')
 colorbar
 title('Daily Energy Density [J/m^2] Contour Plot')
 ylabel('Surface Latitude [deg N]')
-
-
-xlabel('Solar Longitude [deg]')
+xlabel('Martian Sols After Vernal Equinox [Sols]')
