@@ -6,7 +6,7 @@ clear;close all;clc
 
 
 % Vehicle Design Inputs
-    mass_total =  40;     % Total vehicle mass including payload [kg] 
+    mass_total =  50;     % Total vehicle mass including payload [kg] 
     numProp = 4;          % Total number of propeller/motor combinations (4 for quadcopter) 
 
 % Aerodynamic/rotor parameters
