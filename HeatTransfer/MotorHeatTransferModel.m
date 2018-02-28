@@ -21,10 +21,10 @@ Irrelevant variables:
 %% Constants/Inputs
 
 % Operational Specifications
-T_motor = 100; %maximum allowable motor temperature [C]
+T_motor = 70; %maximum allowable motor temperature [C]
 t = 10 * 60; %flight time [s]
-v_freestream = 40; %flight velocity [m/s]
-v_down = 40; %downward flow speed [m/s]
+v_freestream = 30; %flight velocity [m/s]
+v_down = 30; %downward flow speed [m/s]
 
 % Environmental Constants
 g = 3.711; %gravitational acceleration [m/s^2]
@@ -39,9 +39,9 @@ epsilon = 0.98; %motor surface emmisivity
 %alpha = k / (c_p * rho); %thermal diffusivity of atmosphere [m^2/s]
 
 % Motor Specifications
-P_rotor = 5578; %power required by 1 rotor [W]
-eta = 0.875; %motor efficiency [fraction]
-m = 0.75; %motor mass [kg]
+P_rotor = 3181; %power required by 1 rotor [W]
+eta = 0.85; %motor efficiency [fraction]
+m = 0.95; %motor mass [kg]
 c_motor = 100; %approximate specific heat of motor (ranges from 15 to 420 for metals) [W/m*K]
 r = 0.05; %motor radius [m]
 l = 0.2; %motor height [m]
@@ -129,7 +129,7 @@ if Q_dot_across_conv > Q_dot_down_conv
 else
     fprintf('Heat dissipated through convection: %.2f W (down cylinder)\n', -Q_dot_down_conv);
 end
-fprintf('------------------------------------------\n');
+fprintf('---------------------------------------------\n');
 fprintf('   Remaining heat to be dissipated: %.2f W\n\n', Q_dot_remainder);
 
 
