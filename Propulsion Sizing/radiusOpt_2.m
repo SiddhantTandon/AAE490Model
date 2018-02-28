@@ -10,12 +10,12 @@ powerFactor = 1;                % Increase power by a factor to account for forw
 
 
 % Design Variables
-    rho_blade = 1600/2; % density of blade material (carbon fiber for now) [kg/m^3]
+    rho_blade = 1600; % density of blade material (carbon fiber for now) [kg/m^3]
     rho_cruise = rhoMars(h);   % air density on mars [kg/m^3]
     rho_vert = rhoMars(h/2);    % use average air density for climb/descent
     t_blade = 0.04;     % average thickness of rotor blades [m]
     fig_merit = 0.75;   % Figure of Merit (= P_ideal/P_hover)
-    k = 1.1;            % Aerodynamic correction factor
+    k = 1.2;            % Aerodynamic correction factor
     Idraw = 349.625;   % Current required by the motors [A]
     A_body = 4; %m^2
     Cd_body = 2;
@@ -109,7 +109,8 @@ for j=1:length(radius_vector)    % Iterate through many rotor radii
     cap_batt(j) = cap_batt_forward(j) + cap_batt_climb(j) + cap_batt_descend(j);
     
     Mbat(j) = massBattery( cap_batt(j), V_batt );                          % Mass of the battery required
-    Mrotors(j) = numProp * rho_blade * t_blade * solidity * pi * radius_vector(j)^2;       % Mass of rotor blades
+    %Mrotors(j) = numProp * rho_blade * t_blade * solidity * pi * radius_vector(j)^2;       % Mass of rotor blades
+    Mrotors = 16.64;
     
     Power_consumption_array = [P_elec_one_motor_hover(j), P_elec_one_motor_climb(j), P_elec_one_motor_descend(j), P_elec_one_motor_forward(j)];
     Max_power_elec(j) = max(Power_consumption_array);
@@ -129,13 +130,13 @@ for j=1:length(radius_vector)    % Iterate through many rotor radii
     end
 end
 
-figure(1);
-plot(radius_vector,n);
-xlabel('Radius (m)'); ylabel('Mass Remaining Ratio');
+% figure(1);
+% plot(radius_vector,n);
+% xlabel('Radius (m)'); ylabel('Mass Remaining Ratio');
 
 [~,i]=max(n);
 fig_merit = fig_merit(i);
-fprintf('Fig Merit: %.2f\n',fig_merit);
+%fprintf('Fig Merit: %.2f\n',fig_merit);
 Mbat = Mbat(i);
 Mrotors = Mrotors(i);
 Mmotors = Mmotors(i);

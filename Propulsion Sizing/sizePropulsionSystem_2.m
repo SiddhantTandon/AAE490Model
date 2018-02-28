@@ -6,15 +6,15 @@ clear;close all;clc
 
 
 % Vehicle Design Inputs
-    mass_total = 50;     % Total vehicle mass including payload [kg] 
+    mass_total = 60;     % Total vehicle mass including payload [kg] 
     numProp = 4;          % Total number of propeller/motor combinations (4 for quadcopter) 
 
 % Aerodynamic/rotor parameters
-    solidity = 0.3;                    % Blade Solidity
+    solidity = 0.44;                    % Blade Solidity
     num_blades = 2;  % ((This doesn't do anything yet))
-    tipMach = 0.7;                      % Tip Mach Number, chosen to be fixed value
-    Cd_blade_avg = 0.038;               % Average Drag Coefficient for blade
-    radius_vector = linspace(0,8,1000); % potential rotor radii [m]
+    tipMach = 0.8;                      % Tip Mach Number, chosen to be fixed value
+    Cd_blade_avg = 0.036;               % Average Drag Coefficient for blade
+    radius_vector = 0.55; % potential rotor radii [m]
 
 % Electronics Parameters
     V_batt = 40;          % Battery voltage [V]
@@ -23,12 +23,12 @@ clear;close all;clc
 % Mission Profile Parameters
     A_cover = pi * 25000^2;     % Required total coverage area [m^2] 
     h_cruise = 300;             % Cruise altitude above the Martian surface [m]
-    v_cruise = 40;              % Planned cruise velocity [m/s]
+    v_cruise = 30;              % Planned cruise velocity [m/s]
     sensor_fov = 57;            % Left to right field of view angle (full sweep) of the sensor [deg]
     num_drones = 6;             % Total number of drones used for surveying 
     num_days = 90;              % Number of Martian sols required to complete surveying area  
     drone_vert_rate = 4;        % [m/s]  Estimated ascent/descent rate of drone to/from cruise altitude
-    beta = 10;                  % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
+    beta = 20;                  % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
 % Solar Flux Parameters 
 % Less desireable case:
      mission_lat = 20;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
