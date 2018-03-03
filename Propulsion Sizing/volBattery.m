@@ -6,6 +6,8 @@ function [ volume_batt, num_series, num_parallel, total_cells ] = volBattery(V_b
 %
 % Inputs:
 %   V_batt - voltage of the battery that is needed
+%   P_elec_total - total electric power required
+%   t_flight - time the UMASS is in flight
 %
 % Outputs:
 %   volume_batt - volume of the resultant battery system
