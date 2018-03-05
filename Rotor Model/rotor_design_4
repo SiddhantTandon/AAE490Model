@@ -1,22 +1,23 @@
 % Import data file as matrix
 airfoil = dlmread('NACA 4404 Data.txt');
 airfoil = airfoil';
-
+ 
 % Input Variables
 r = .5; %m
+r_min = 0; %m
 sections = 5;
 c_max = r/2;
 v_tip = .7*240; %m/s
 L_min = 11.5; % N
 mass_max = .85; % kg
 P_max = 1000; % W
-
+ 
 % Constants
 rho = .02; %kg/m^3
 mu = 1.422e-5; %kg/m/s
 material_rho = 1600; %kg/m^3    effective density of material taking empty space into account
 thickness = .04; %x/c    average thickness of airfoil
-
+ 
 weight = 50*3.71;
 blade_number = 4;
 rotor_number = 4;
@@ -24,7 +25,7 @@ thrust_per_rotor = weight/rotor_number;
 thrust_per_blade = thrust_per_rotor/blade_number;
 A_disk = pi*r^2;
 vi = sqrt(thrust_per_rotor / (2*rho*A_disk));
-
+ 
 % Define Output matrices
 cs = dec2base(0:sections^sections-1,sections) - '0';
 cs = cs + 1;
@@ -44,12 +45,12 @@ ts = zeros(1,sections); % thickness
 masses = zeros(1,sections); % mass
 inertias = zeros(1,sections); % moment of inertia
 powers = zeros(1,sections); % required power
-
+ 
 z = 0;
 for c = cs
     count = 1;
     while count <= sections
-        As(count) = c(count)*r/sections;
+        As(count) = c(count)*(r-r_min)/sections;
         ts(count) = c(count)*thickness;
         masses(count) = As(count).*ts(count)*material_rho;
         inertias(count) = masses(count)*(count-.5)/sections;
@@ -60,7 +61,7 @@ for c = cs
     end
     count = 1;
     while count <= sections % iterate through sections
-        v_inf = (count - .5)*v_tip/sections; % average velocity of section
+        v_inf = (r_min + (count - .5)*(r-r_min)/sections)/r*v_tip; % average velocity of section
         phi = atan(vi/v_inf);
         v = vi/sin(phi);
         Re = v*c(count)*rho/mu; % average Reynolds of section
@@ -80,15 +81,15 @@ for c = cs
             end
             y = y + 1;
         end
-
+ 
         % Calculations for individual section of blade
-        alphas(count) = airfoil(1,n) + phi*(180/pi);
+        alphas(count) = airfoil(1,n);
         cls(count) = airfoil(3,n);
         cds(count) = airfoil(4,n);
         cms(count) = airfoil(6,n);
-        Ls(count) = cls(count)*.5*rho*v^2*c(count)*r/sections;
-        Ds(count) = cds(count)*.5*rho*v^2*c(count)*r/sections;
-        Ms_pitch(count) = cms(count)*.5*rho*v^2*c(count)^2*r/sections;
+        Ls(count) = cls(count)*.5*rho*v^2*c(count)*(r-r_min)/sections;
+        Ds(count) = cds(count)*.5*rho*v^2*c(count)*(r-r_min)/sections;
+        Ms_pitch(count) = cms(count)*.5*rho*v^2*c(count)^2*(r-r_min)/sections;
         Ms_drag(count) = Ds(count)*(count-.5)/sections;
         count = count + 1;
     end
@@ -123,6 +124,6 @@ for c = cs
         c
         z = z+1;
     end
-
+ 
 end
 fprintf('Total Possible Blades: %d\n',z);    
