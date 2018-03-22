@@ -69,7 +69,7 @@ for r = 0.7 % 0.5:0.05:0.7
             
             A = sum(As); % total area
             solidity = blade_number * A / A_disk;
-            theta_tip = 2 * CT / (solidity * 5.7) + 0.5 * sqrt(CT);
+            theta_tip = (2 * CT / (solidity * 5.7) + 0.5 * sqrt(CT)) * 180 / pi;
             
             success = 1;
             for count = 1:sections % iterate through sections
