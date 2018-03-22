@@ -36,6 +36,8 @@ rho = 0.0139; %atmospheric density [kg/m^3]
 k = 0.0096; %thermal conductivity [W/m*K]
 mu = 1.422e-5; %dynamic viscosity [m^2/s]
 epsilon = 0.98; %motor surface emmisivity
+
+Pr = mu * c_p / k; %Prandtl number
 %alpha = k / (c_p * rho); %thermal diffusivity of atmosphere [m^2/s]
 
 % Motor Specifications
@@ -50,20 +52,19 @@ A_noFin = (2 * pi * r * l + 2 * pi * r^2); %surface area of motor (no fins) [m^2
 
 %% Total Wasted Power
 
+P_waste = (P_rotor / eta) * (1 - eta); %power lost by 1 motor
+E_waste = P_waste * t;
+
 deltaT = T_motor - T_mars; %temp. difference between motor & atmosphere
 T_mars = T_mars + 273.15; %convert to K
 T_motor = T_motor + 273.15; %convert to K
 
-P_dis = (P_rotor / eta) * (1 - eta); %power lost by 1 motor
-
-
-%% Possible Heat Transfer Characteristics
-
-Pr = mu * c_p / k; %Prandtl number
+%% Baseline Heat Transfer Characteristics
 
 % Motor temperature increase
 Q_dot_accum = m * c_motor * deltaT / t; %rate energy can be absorbed by motor over flight w/o overheating [W]
 %h_req = Q_dot_req / (A_noFin * deltaT); %required convective h.t. coef. (no fins) [W/m^2*K]
+
 
 % Convective flow across cylinder
 l_char_across = 2*r; %characteristic length = diameter
@@ -88,11 +89,10 @@ Q_dot_rad = epsilon * sigma * A_noFin * (T_motor^4 - T_mars^4); %power dissipati
 
 
 % Remaining heat to dissipate
-Q_dot_remainder = P_dis - Q_dot_accum - Q_dot_rad - max(Q_dot_across_conv, Q_dot_down_conv);
+Q_dot_remainder = P_waste - Q_dot_accum - Q_dot_rad - max(Q_dot_across_conv, Q_dot_down_conv);
 
-%% Potential Solutions
 
-% Heat pipes
+%% Heat Pipes
 lengthPipes = 1; %pipe length in m
 
 linearDensity = 0.0184 / 0.3; %18.4g/300mm
@@ -107,6 +107,17 @@ fprintf('Number of Pipes: %d\n', numPipes);
 fprintf('Total Pipe Mass: %.2f kg\n', massPipes);
 fprintf('Heat dissipation rate: %.2f W\n', Q_dot_pipe_total);
 % DOESN'T INCLUDE MASS OF HEAT SINKS
+
+%% High Thermal Capacity Materials
+
+
+
+%% Temperature Calculations
+
+T_f_motor_insulated = E_waste / (m * c_motor) + T_mars; 
+T_f_motor_baseline = Q_dot_remainder * t / (m * c_motor) + T_mars; 
+
+
 %% Results
 
 % Assumptions
@@ -121,7 +132,7 @@ fprintf('Power to Rotor: %.2f W\n\n', P_rotor);
 
 % Heating rates
 fprintf('Heating Rates:\n');
-fprintf('                Total power wasted: %.2f W\n', P_dis);
+fprintf('                Total power wasted: %.2f W\n', P_waste);
 fprintf('    Heat absorbed by motor heating: %.2f W\n', -Q_dot_accum);
 fprintf(' Heat dissipated through radiation: %.2f W\n', -Q_dot_rad);
 if Q_dot_across_conv > Q_dot_down_conv
@@ -131,6 +142,13 @@ else
 end
 fprintf('---------------------------------------------\n');
 fprintf('   Remaining heat to be dissipated: %.2f W\n\n', Q_dot_remainder);
+
+% Motor Temperatures
+fprintf('Motor Temperatures:\n')
+fprintf('      Motor Temperature with no dissipation: %.2f K\n', T_f_motor_insulated);
+fprintf('Motor Temperature with baseline dissipation: %.2f K\n', T_f_motor_baseline);
+%fprintf('Motor Temperature with baseline dissipation: %.2f K\n', T_f_motor_baseline);
+
 
 
 
