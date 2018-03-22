@@ -1,4 +1,4 @@
-function [ volume_batt, num_series, num_parallel2, total_cells ] = volBattery(V_batt, P_elec_total, t_flight)
+function [ volume_batt, num_series, num_parallel, total_cells ] = volBattery(V_batt, P_elec_total, t_flight)
 %
 % Description: 
 %   Calculate the volume of the resultant battery system based on the
@@ -16,6 +16,7 @@ function [ volume_batt, num_series, num_parallel2, total_cells ] = volBattery(V_
 %   total_cells - totall number of battery cells in resulting configuration
 
 discharge_percent = 0.7;
+num_parallel = (P_elec_total/discharge_percent) 
 cap_batt = 3; %AH
 E_req = P_elec_total * t_flight * 60; % [W]*[hr]* 3600[s/hr] = W*s = J
 %For a 12S battery cell:
@@ -25,8 +26,7 @@ V_batt_mean = S*V_mean; %[V] Voltage of the resulting battery
 num_series = ceil(V_batt/V_mean); %number of cells in series, round up
 numJ = V_mean*num_series*cap_batt*3600; %[V]*[number in series]*[A*hr]*[s/hr] = [W*hr]*[s/hr] = [W*s] = [J]
 num_parallel = ceil(E_req/numJ);
-num_parallel2 = ceil((E_req/discharge_percent)/numJ);
-total_cells = num_series*num_parallel2;
+total_cells = num_series*num_parallel;
 
 %For 25500 battery cells
 %http://www.ebay.com/gds/A-Beginners-Guide-to-Buying-Li-Ion-Batteries-/10000000177590030/g.html 
