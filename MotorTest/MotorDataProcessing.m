@@ -4,23 +4,22 @@ clc
 % preliminary rotor moment of inertia ~1 Nm
 % preliminary drag moment ~0.3 Nm
 
+%{
+Turnigy Aerodrive Motor Specs:
+Max Current: 80 A
+Max Power: 4032 W
+Operating Voltage: 10-12S LiPoly
+rpm/V: 192kv
+%}
+
+
 %% Load data from File
 
 fileName = '2_19_637pm.csv'; % 627, 629, 633, 635, 637
 sampleFreq = 1; %[samples/sec]
 
-%{
-% Find KV from csv File
-fileID = fopen(fileName);
-line = '     ';
-while line(3:4) ~= 'KV'
-    line = fgetl(fileID);
-end
-kv = str2double(line(8 : end));
-fclose(fileID);
-%}
-kv = 370;
-polesMotor = 14;
+kv = 370; %Turnigy motor - 192kv
+polesMotor = 14; %Turnigy motor - 14 turns?  counted 12 coils
 
 % Skip initial info lines
 fileID = fopen(fileName);
