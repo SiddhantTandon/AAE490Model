@@ -53,7 +53,7 @@ clear;close all;clc
 % This section was adapted from Cornell's Martian RHOVER Feasibility Study (http://www.mae.cornell.edu/mae/news/loader.cfm?csModule=security/getfile&amp;pageid=282149)    
     % Return the individual rotor radius that minimizes propulsion/power system weight
     [mass_batt, mass_rotor, mass_motors, cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_elec_total] = radiusOpt(solidity, tipMach, Cd_blade_avg, mass_total, radius_vector, numProp, t_flight, V_batt, motor_eff, sun_time, solar_flux, h_cruise); 
-    [voluBat, num_series, num_parallel, total_cells] = volBattery(V_batt, P_elec_total, t_flight);
+    [voluBat, num_series, num_parallel, total_cells, I_req, R] = volBattery(V_batt, P_elec_total, t_flight);
     P_mech_one_motor = P_mech_total/numProp;    % Caculate mech. and elec. powers per motor [W]
     P_elec_one_motor = P_elec_total/numProp;
     
