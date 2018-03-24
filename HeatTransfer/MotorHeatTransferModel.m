@@ -118,15 +118,15 @@ fprintf('Heat dissipation rate: %.2f W\n', Q_dot_pipe_total);
 Notes:
 1) Sized assuming no convective or radiative heat transfer
 2) Cell array structure: {material, T_melt, H_delta_fus, c_p_liquid, c_p_solid
-                            rho_solid, rho_liquid}
+                            rho_solid, rho_liquid, k}
 3) List of phase change materials: https://en.wikipedia.org/wiki/Phase-change_material
 4) Many tunable PCM materials available
 %}
 
 % Material Properties
-n = 2; %index of PCM material for analysis
-materialOPtions = {'water', 0, 300000, 4187, 2108, 916, 995;
-                   '0400-Q20 BioPCM', 20, 215000, 3200, 3500, 1075, 1125};
+n = 1; %index of PCM material for analysis
+materialOPtions = {'water'          , 0 , 300000, 4187, 2108, 916 , 995 , 2   ;
+                   '0400-Q20 BioPCM', 20, 215000, 3200, 3500, 1075, 1125, 0.45};
 
 PCM = materialOPtions{n, 1}; %phase change material
 T_melt = materialOPtions{n, 2}; %melting point [C]
@@ -172,6 +172,10 @@ V_liquid = m_PCM / rho_liquid; %volume of liquid [m^3]
 V_solid = m_PCM / rho_solid; %volume of solid [m^3]
 
 percent_vol_change = (V_liquid - V_solid) / V_solid;
+
+%alpha = materialOPtions{n, 8} / (rho_liquid * c_p_liquid);
+%Bi = h_across_conv * pi * r^2 * l / (materialOPtions{n, 8} * A_noFin);
+
 
 %% Temperature Calculations
 
