@@ -74,11 +74,10 @@ for r = tip_radii % radius iteration loop
         v_tip = Mach_tip * a;
         for c = cs
             % Begin convergence loop to predict behavior
-            vi_approx1 = 1;
-            vi_approx2 = -1;
-            L = thrust_per_blade;
-            while abs(vi_approx1 - vi_approx2) > 1.5
-                vi_approx1 = sqrt(L * blade_number / (2*rho*A_disk)); % initial approximation for induced velocity
+            L1 = thrust_per_blade;
+            L2 = -5;
+            while abs(thrust1 - thrust2) > 1.5
+                vi_approx1 = sqrt(L1 * blade_number / (2*rho*A_disk)); % initial approximation for induced velocity
                 for count = 1:sections % iterate through sections
                     As(count) = c(count)*(r-r_min)/sections;
                     r_pos = r_min + (count - .5)*(r-r_min)/sections;
@@ -118,9 +117,9 @@ for r = tip_radii % radius iteration loop
                     Ls(count) = cls(count)*.5*rho*v^2*c(count)*(r-r_min)/sections;
                 end
                 
-                % Check induced velocity
-                L = sum(Ls); % total lift
-                vi_approx2 = sqrt(L * blade_number / (2*rho*A_disk)); % updated approximation for induce velocity
+                % Check thrust
+                L2 = sum(Ls); % total thrust
+                L1 = (L1 + L2) / 2;
             end
             
             A = sum(As); % total area
@@ -131,7 +130,7 @@ for r = tip_radii % radius iteration loop
 
             % Store data
             storage.chords = c';
-            storage.thrust = L;
+            storage.thrust = L2;
             storage.blade_number = blade_number;
             storage.rotor_number = rotor_number;
             storage.AoA = alfas;
@@ -142,7 +141,7 @@ for r = tip_radii % radius iteration loop
             storage.min_radius = r_min;
             storage.Mach_tip = Mach_tip;
             
-            if L > thrust_per_blade
+            if L2 > thrust_per_blade
                 success_blades = [success_blades, storage];
             else
                 fail_blades = [fail_blades, storage];
