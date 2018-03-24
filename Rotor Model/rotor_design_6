@@ -1,0 +1,154 @@
+clc; clear;
+% Import data file as matrix
+airfoil = dlmread('NACA 4404 Data.txt');
+airfoil = airfoil';
+ 
+%% Input Variables
+sections = 5; % Number of blade sections to iterate (must be integer greater than 1)
+chord_fid = 5; % Fidelity of chord variation (must be integer greater than 1)
+var_allow = 1; % Allowable chord variation (must be integer greater than or equal to zero)
+vehicle_mass = 70; % kg
+tip_radii = [0.7]; % tip radii to iterate
+tip_Mach_nums = [0.7]; % tip Mach numbers to iterate
+blade_number = 4;
+rotor_number = 4;
+ 
+% Constants
+rho = 0.02; % kg/m^3
+a = 240; % m/s
+mu = 1.422 * 10^-5; % kg/m/s
+g = 3.71; % m/s^2
+ 
+weight = vehicle_mass * g;
+thrust_per_rotor = weight/rotor_number;
+thrust_per_blade = thrust_per_rotor/blade_number;
+ 
+% Define storage matrices
+thetas = zeros(1,sections); % angle of attack
+cls = zeros(1,sections); % coefficient of lift
+cds = zeros(1,sections); % coefficient of drag
+cms = zeros(1,sections); % coefficient of moment
+Ls = zeros(1,sections); % Lift
+Ds = zeros(1,sections); % Drag
+Ms_pitch = zeros(1,sections); % Pitching Moment
+Ms_drag = zeros(1,sections); % Drag Moment
+As = zeros(1,sections); % Area
+Res = zeros(1,sections); % Reynolds number
+ts = zeros(1,sections); % thickness
+success_blades = []; % Storage matrix for successful designs
+fail_blades = []; % Storage matrix for failed designs
+
+% Construct chord matrix
+chord_matrix(1,:) = 1:chord_fid;
+for section = 2:sections
+    new_matrix = [];
+    for blade = 1:length(chord_matrix(section-1,:))
+        % Determine chord bounds
+        min_chord = (chord_matrix(section-1,blade)) - var_allow;
+        if min_chord < 1
+            min_chord = 1;
+        end
+        max_chord = (chord_matrix(section-1,blade)) + var_allow;
+        if max_chord > chord_fid
+            max_chord = chord_fid;
+        end
+        % Construct new additions
+        new_add = [];
+        for chord = min_chord:max_chord
+            new_add = [new_add, [chord_matrix(:,blade); chord]];
+        end
+        new_matrix = [new_matrix, new_add];
+    end
+    chord_matrix = new_matrix;
+end
+base_cs = chord_matrix;
+
+%% Begin primary design loop
+for r = tip_radii % radius iteration loop
+    fprintf('Checking radius r = %.1f m...\n', r);
+    r_min = 0.1 * r;
+    cs = (r/3)/sections * base_cs;
+    A_disk = pi*r^2;
+    for Mach_tip = tip_Mach_nums % tip Mach number iteration loop
+        fprintf('    Checking tip Mach number Mach_tip = %.1f...\n', Mach_tip);
+        v_tip = Mach_tip * a;
+        for c = cs
+            % Begin convergence loop to predict behavior
+            L1 = thrust_per_blade;
+            L2 = -5;
+            while abs(thrust1 - thrust2) > 1.5
+                vi_approx1 = sqrt(L1 * blade_number / (2*rho*A_disk)); % initial approximation for induced velocity
+                for count = 1:sections % iterate through sections
+                    As(count) = c(count)*(r-r_min)/sections;
+                    r_pos = r_min + (count - .5)*(r-r_min)/sections;
+                    v_inf = r_pos/r*v_tip; % average velocity of section
+                    Mach_section = v_inf / a;
+                    phi = atan(vi_approx1/v_inf) * 180 / pi;
+                    v = vi_approx1/sin(phi / 180 * pi);
+                    Re = v*c(count)*rho/mu; % average Reynolds of section
+                    if Re < 500
+                        Re = 1000;
+                    end
+                    Re = round(Re,-3);
+
+                    % Find max cl
+                    maxcl = 0;
+                    for data_set = airfoil % iterate through data
+                        if data_set(2) == Re
+                            cl = data_set(3);
+                            if cl > maxcl
+                                maxcl = cl;
+                                maxcl_alfa = data_set(1);
+                            end
+                        end
+                    end
+                    % Pitch down
+                    for data_set = airfoil % iterate through data
+                        if data_set(2) == Re && (data_set(1) == maxcl_alfa - 2.0)
+                            break
+                        end
+                    end
+
+                    % Extract data for individual section of blade
+                    alfas(count) = data_set(1);
+                    thetas(count) = data_set(1) + phi;
+                    cls(count) = data_set(3)/sqrt(1-Mach_section^2);
+                    cds(count) = data_set(4)/sqrt(1-Mach_section^2);
+                    Ls(count) = cls(count)*.5*rho*v^2*c(count)*(r-r_min)/sections;
+                end
+                
+                % Check thrust
+                L2 = sum(Ls); % total thrust
+                L1 = (L1 + L2) / 2;
+            end
+            
+            A = sum(As); % total area
+            solidity = blade_number * A / A_disk;
+            cd = mean(cds);
+            A = sum(As); % total reference area of blades
+            solidity = blade_number * A / A_disk;
+
+            % Store data
+            storage.chords = c';
+            storage.thrust = L2;
+            storage.blade_number = blade_number;
+            storage.rotor_number = rotor_number;
+            storage.AoA = alfas;
+            storage.pitches = thetas;
+            storage.solidity = solidity;
+            storage.CD0 = cd;
+            storage.radius = r;
+            storage.min_radius = r_min;
+            storage.Mach_tip = Mach_tip;
+            
+            if L2 > thrust_per_blade
+                success_blades = [success_blades, storage];
+            else
+                fail_blades = [fail_blades, storage];
+            end
+            
+        end
+    end
+end
+fprintf('Total Successful Blades: %d\n',length(success_blades));
+fprintf('Total Failed Blades: %d\n',length(fail_blades));
