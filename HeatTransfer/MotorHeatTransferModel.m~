@@ -118,23 +118,20 @@ fprintf('Heat dissipation rate: %.2f W\n', Q_dot_pipe_total);
 Notes:
 1) Sized assuming no convective or radiative heat transfer
 2) Cell array structure: {material, T_melt, H_delta_fus, c_p_liquid, c_p_solid
-                            rho_solid, rho_liquid}
-3) List of phase change materials: https://en.wikipedia.org/wiki/Phase-change_material
-4) Many tunable PCM materials available
-%}
+%                           rho_solid, rho_liquid
 
 % Material Properties
-n = 2; %index of PCM material for analysis
-materialOPtions = {'water', 0, 300000, 4187, 2108, 916, 995;
-                   '0400-Q20 BioPCM', 20, 215000, 3200, 3500, 1075, 1125};
-
-PCM = materialOPtions{n, 1}; %phase change material
-T_melt = materialOPtions{n, 2}; %melting point [C]
-H_delta_fus = materialOPtions{n, 3}; %latent heat of fusion [J/kg]
-c_p_liquid = materialOPtions{n, 4}; %heat capacity of liquid [J/kg*K]
-c_p_solid = materialOPtions{n, 5}; %heat capacity of solid [J/kg*K]
-rho_solid = materialOPtions{n, 6}; %density of solid [kg/m^3]
-rho_liquid = materialOPtions{n, 7}; %density of liquid at maximum temp [kg/m^3]
+n = 1; %index of PCM material for analysis
+% PCM, T_melt, latent heat of fusion,specific heat of liquid,
+%             specific heat of solid, density of solid, density of liquid 
+materialOPtions = {'water', 0, 300000, 4187, 2108, 916, 995};
+PCM = materialOPtions{1, 1}; %phase change material
+T_melt = materialOPtions{1, 2}; %melting point [C]
+H_delta_fus = materialOPtions{1, 3}; %latent heat of fusion [J/kg]
+c_p_liquid = materialOPtions{1, 4}; %heat capacity of liquid [J/kg*K]
+c_p_solid = materialOPtions{1, 5}; %heat capacity of solid [J/kg*K]
+rho_solid = materialOPtions{1, 6}; %density of solid [kg/m^3]
+rho_liquid = materialOPtions{1, 7}; %density of liquid at maximum temp [kg/m^3]
 
 T_melt = T_melt + 273.15; %melting point [K]
 T_0 = max(T_mars, T_motor_min);
