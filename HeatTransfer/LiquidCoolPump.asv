@@ -85,16 +85,16 @@ h = Nu_pipe * k / Dpipe;
 % T3 = T_fl_cold;
 
 %Thermo
-Q = P_dis;
+Q = P_dis*10*60;
 Qcond = P_dis;
-Qconv = P_dis;
+qconv = P_dis;
 
 
 %qcond = k*A_in*(T1-Tpipe)/L
 Tpipe1 = -(Qcond*L_in /(k_Al*A_in)) + T_motor;
 %qconv = k*A_in*(T1-Tpipe)/L
-T2 = -(Qconv/(h*Apipe)) + Tpipe1;
-Tpipe2 = -(Qconv/(h*Apipe)) + T2;
+T2 = -(qconv/(h*Apipe)) + Tpipe1;
+Tpipe2 = -(qconv/(h*Apipe)) + T2;
 Tatm2 = -(Qcond*L_in /(k_Al*A_in))+ Tpipe2;
 Arad = Q/(epsilon * sigma * (Tatm2^4));
 
@@ -106,18 +106,16 @@ W_pump = m_dot*( h_cold - h_hot);
 
 
 %% Results
-fprintf('Total heat dissapation unaccounted for: %.2f W\n\n', P_dis);
+fprintf('Total heat dissapation unaccounted for: %.2f W\n', P_dis);
 
 % LiquidCoolPump
-fprintf('Fluid: Pentane, Tubing: Aluminum\n');
-fprintf('Thickness of pipe: %.2f mm\n', L_in*1000);
-fprintf('Velocity of fluid in pipe: %.2f m/s\n', Vpipe);
-fprintf('Reynolds number in pipe: %.2f \n       Note: Re > 2300 is assumed turbulent flow\n', Re_pipe);
-fprintf('Temperature of heated fluid: %.2f degrees C\n', T2);
-fprintf('Temperature of Mars atmosphere in radiation calculation: %.2f degrees C\n', Tatm2);
-fprintf('Area of radiator: %.2E m^2\n', Arad);
-fprintf('Mass flow rate in pipes: %.2f kg/s\n', m_dot);
-fprintf('Pump work: %.2E W\n        Note: Work into system is negative\n', W_pump);
+fprintf('Thickness of pipe: %.2f mm\n\n', L_in*1000);
+fprintf('Reynolds number in pipe: %.2f \n       Note: Re > 2300 is assumed turbulent flow\n\n', Re_pipe);
+fprintf('Temperature of heated fluid: %.2f degrees C\n\n', T2);
+fprintf('Temperature of Mars atmosphere in radiation calculation: %.2f degrees C\n\n', Tatm2);
+fprintf('Area of radiator: %.2E m^2\n\n', Arad);
+fprintf('Mass flow rate in pipes: %.2f kg/s\n\n', m_dot);
+fprintf('Pump work: %.2E J\n        Note: Work into system is negative\n\n', W_pump);
 
 
 
