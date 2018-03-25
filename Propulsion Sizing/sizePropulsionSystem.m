@@ -17,7 +17,8 @@ clear;close all;clc
     radius_vector = linspace(0,8,1000); % potential rotor radii [m]
 
 % Electronics Parameters
-    V_batt = 43.2;          % Battery voltage [V]
+    V_batt = 43.7377;          % Battery Voltage [V]
+    V_motor = 43.2;         %Motor Voltage [V]
     motor_eff = 0.85;     % Efficency factor between mechancial power and electrical power (= P_mech/P_elec)
     
 % Mission Profile Parameters
@@ -53,9 +54,12 @@ clear;close all;clc
 % This section was adapted from Cornell's Martian RHOVER Feasibility Study (http://www.mae.cornell.edu/mae/news/loader.cfm?csModule=security/getfile&amp;pageid=282149)    
     % Return the individual rotor radius that minimizes propulsion/power system weight
     [mass_batt, mass_rotor, mass_motors, cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_elec_total] = radiusOpt(solidity, tipMach, Cd_blade_avg, mass_total, radius_vector, numProp, t_flight, V_batt, motor_eff, sun_time, solar_flux, h_cruise); 
-    [voluBat, num_series, num_parallel, total_cells, I_req, R] = volBattery(V_batt, P_elec_total, t_flight);
+    [voluBat, num_series, num_parallel, total_cells, R] = volBattery(V_batt, P_elec_total, t_flight);
     P_mech_one_motor = P_mech_total/numProp;    % Caculate mech. and elec. powers per motor [W]
     P_elec_one_motor = P_elec_total/numProp;
+    
+    I = P_elec_total/V_motor; %Current thru motor [Amps]
+    V_battchk = I*R + V_motor; %should be equal to V_batt, adjust V_batt to equal V_battchk
     
     excess_heat = P_elec_total - P_mech_total;
 
