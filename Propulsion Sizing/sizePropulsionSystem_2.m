@@ -10,14 +10,15 @@ clear;close all;clc
     numProp = 4;          % Total number of propeller/motor combinations (4 for quadcopter) 
 
 % Aerodynamic/rotor parameters
-    solidity = 0.44;                    % Blade Solidity
+    solidity = 0.35;                    % Blade Solidity
     num_blades = 2;  % ((This doesn't do anything yet))
-    tipMach = 0.8;                      % Tip Mach Number, chosen to be fixed value
+    tipMach = 0.7;                      % Tip Mach Number, chosen to be fixed value
     Cd_blade_avg = 0.036;               % Average Drag Coefficient for blade
-    radius_vector = 0.55; % potential rotor radii [m]
+    radius_vector = 0.6; %linspace(0.01,1,1000); % potential rotor radii [m]
 
 % Electronics Parameters
     V_batt = 40;          % Battery voltage [V]
+    V_motor = 43.2;         %Motor Voltage [V]
     motor_eff = 0.85;     % Efficency factor between mechancial power and electrical power (= P_mech/P_elec)
     
 % Mission Profile Parameters
@@ -28,15 +29,17 @@ clear;close all;clc
     num_drones = 6;             % Total number of drones used for surveying 
     num_days = 90;              % Number of Martian sols required to complete surveying area  
     drone_vert_rate = 4;        % [m/s]  Estimated ascent/descent rate of drone to/from cruise altitude
+    accel_climb = 0.01;
+    accel_forward = 1;
     beta = 20;                  % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
 % Solar Flux Parameters 
 % Less desireable case:
      mission_lat = 20;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
-     solar_lon = 70;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
+     solar_lon = 70;      % Angular position of Mars around the Sun [deg], based on time of year (0Â° corresponds to northern vernal equinox)
   
 % More desireable case:
 %     mission_lat = -15;    % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg) 
-%     solar_lon = 250;      % Angular position of Mars around the Sun [deg], based on time of year (0° corresponds to northern vernal equinox)
+%     solar_lon = 250;      % Angular position of Mars around the Sun [deg], based on time of year (0Â° corresponds to northern vernal equinox)
 %    
     
   
@@ -52,10 +55,14 @@ clear;close all;clc
     
 % This section was adapted from Cornell's Martian RHOVER Feasibility Study (http://www.mae.cornell.edu/mae/news/loader.cfm?csModule=security/getfile&amp;pageid=282149)    
     % Return the individual rotor radius that minimizes propulsion/power system weight
-    [mass_batt, mass_rotor, mass_motors, cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_elec_total] = radiusOpt_2(solidity, tipMach, Cd_blade_avg, mass_total, radius_vector, numProp, t_flight, V_batt, motor_eff, sun_time, solar_flux, h_cruise, drone_vert_rate, v_cruise, beta); 
+    [mass_batt, mass_rotor, mass_motors, cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_elec_total] = radiusOpt_2(solidity, tipMach, Cd_blade_avg, mass_total, radius_vector, numProp, t_flight, V_batt, motor_eff, sun_time, solar_flux, h_cruise, drone_vert_rate, v_cruise, beta, accel_climb, accel_forward); 
+    [voluBat, num_series, num_parallel, total_cells, R] = volBattery(V_batt, P_elec_total, t_flight);
     
     P_mech_one_motor = P_mech_total/numProp;    % Caculate mech. and elec. powers per motor [W]
     P_elec_one_motor = P_elec_total/numProp;
+    
+    I = P_elec_total/V_motor; %Current thru motor [Amps]
+    V_battchk = I*R + V_motor; %should be equal to V_batt, adjust V_batt to equal V_battchk
     
     excess_heat = P_elec_total - P_mech_total;
 
