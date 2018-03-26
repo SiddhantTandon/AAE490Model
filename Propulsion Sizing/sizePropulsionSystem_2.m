@@ -29,7 +29,7 @@ clear;close all;clc
     num_drones = 6;             % Total number of drones used for surveying 
     num_days = 90;              % Number of Martian sols required to complete surveying area  
     drone_vert_rate = 4;        % [m/s]  Estimated ascent/descent rate of drone to/from cruise altitude
-    accel_climb = 0.01;
+    accel_climb = 1;
     accel_forward = 1;
     beta = 20;                  % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
 % Solar Flux Parameters 
