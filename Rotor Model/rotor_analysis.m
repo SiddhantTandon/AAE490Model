@@ -13,15 +13,15 @@ M_crit = 0.8;
 
 % Input data
 vehicle_mass = 60; % kg
-pitches = -5:0.5:5;
-tip_Mach_nums = 0.6:0.05:0.8;
+pitches = -5:5;
+tip_Mach_nums = 0.65:0.05:M_crit;
 beta = 20; % flight inclination (deg)
 
 % Instance storage
 analyzed_blades = [];
 
 %% Primary analysis loop
-for blade = 1:length(success_blades)
+for blade = 366:length(success_blades)
     fprintf('Analyzing blade %d...\n', blade);
     blade_data = success_blades(blade);
     c = blade_data.chords;
@@ -100,6 +100,9 @@ for blade = 1:length(success_blades)
         
         % Determine cruise performance
         for v_cruise = 20:5:35
+            if v_max_data(1) > v_cruise % reduce loop checking for low speed flight
+                continue
+            end
             v_tip = (M_crit * a) - v_cruise;
             ux = v_cruise * cosd(beta) / v_tip;
             uz = v_cruise * sind(beta) / v_tip;
@@ -173,4 +176,4 @@ for blade = 1:length(success_blades)
     analyzed_blades = [analyzed_blades, blade_data];
 end
 
-fprintf('Done!');
+fprintf('Done!\n');
