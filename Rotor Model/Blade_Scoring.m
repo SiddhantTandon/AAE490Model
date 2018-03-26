@@ -4,7 +4,7 @@ for i = 1:length(analyzed_blades)
     blade_data = analyzed_blades(i);
     v_max(i) = blade_data.v_max_data(1);
     accel_max(i) = blade_data.max_accel_data(1);
-    carry_cap(i) = blade_data.mass_avail; % *** NEED TO FIX THIS, use Storage struct?
+    carry_cap(i) = blade_data.mass_avail;
 end
 
 max_v_max = max(v_max);
