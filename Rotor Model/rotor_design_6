@@ -4,12 +4,12 @@ airfoil = dlmread('NACA 4404 Data.txt');
 airfoil = airfoil';
  
 %% Input Variables
-sections = 5; % Number of blade sections to iterate (must be integer greater than 1)
+sections = 7; % Number of blade sections to iterate (must be integer greater than 1)
 chord_fid = 5; % Fidelity of chord variation (must be integer greater than 1)
 var_allow = 1; % Allowable chord variation (must be integer greater than or equal to zero)
 vehicle_mass = 60; % kg
-tip_radii = [0.7]; % tip radii to iterate
-tip_Mach_nums = [0.7]; % tip Mach numbers to iterate
+tip_radii = 0.5:0.05:0.7; % tip radii to iterate
+tip_Mach_nums = 0.55:0.05:0.7; % tip Mach numbers to iterate
 blade_number = 4;
 rotor_number = 4;
  
@@ -59,14 +59,18 @@ base_cs = chord_matrix;
 
 %% Begin primary design loop
 for r = tip_radii % radius iteration loop
-    fprintf('Checking radius r = %.1f m...\n', r);
+    fprintf('Checking radius r = %.2f m...\n', r);
     r_min = 0.1 * r;
-    cs = (r/3)/sections * base_cs;
+    cs = (r/3)/chord_fid * base_cs;
     A_disk = pi*r^2;
     for Mach_tip = tip_Mach_nums % tip Mach number iteration loop
-        fprintf('    Checking tip Mach number Mach_tip = %.1f...\n', Mach_tip);
+        fprintf('    Checking tip Mach number Mach_tip = %.2f...\n', Mach_tip);
         v_tip = Mach_tip * a;
+        c_check = 1;
         for c = cs
+            if ~rem(c_check,1000)
+                fprintf('        Checking chord distribution %d...\n', c_check);
+            end
             % Begin convergence loop to predict behavior
             L1 = thrust_per_blade;
             L2 = -5;
@@ -146,7 +150,7 @@ for r = tip_radii % radius iteration loop
             else
                 fail_blades = [fail_blades, storage];
             end
-            
+            c_check = c_check + 1;
         end
     end
 end
