@@ -120,8 +120,3 @@ fprintf('Mass flow rate in pipes: %.2f kg/s\n', m_dot);
 fprintf('Pump work: %.2E W\n        Note: Work into system is negative\n', W_pump);
 
 
-
-
-
-
-
