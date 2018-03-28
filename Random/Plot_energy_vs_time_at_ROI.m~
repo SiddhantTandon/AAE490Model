@@ -1,0 +1,21 @@
+
+% Generate simple line plot of  solar energy density vs time
+% of year for the partucular latitude at the region of interest. Solar
+% energy density is interpolated to the correct latitude. 
+
+clear;close all;clc
+
+load('Results_of_Plot_flux_fn.mat')
+
+ROI_lat = 18.8
+
+for i = 1:length(year_days)
+    
+    ener
+    
+    
+    
+end
+
+
+

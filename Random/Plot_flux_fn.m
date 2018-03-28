@@ -46,3 +46,9 @@ colorbar
 title('Daily Energy Density [J/m^2] Contour Plot')
 ylabel('Surface Latitude [deg N]')
 xlabel('Martian Sols After Vernal Equinox [Sols]')
+
+% Add ROI to plot
+hold on
+plot([0,668.6],[18.86, 18.86],'k-')
+annotation('textarrow',[0.45 0.48],[0.67 0.61],'String','Region of Interest','Fontsize',15)
+

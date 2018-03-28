@@ -124,7 +124,7 @@ Notes:
 %}
 
 % Material Properties
-n = 1; %index of PCM material for analysis
+n = 2; %index of PCM material for analysis
 materialOPtions = {'water'          , 0 , 300000, 4187, 2108, 916 , 995 , 2   ;
                    '0400-Q20 BioPCM', 20, 215000, 3200, 3500, 1075, 1125, 0.45};
 
@@ -173,8 +173,8 @@ V_solid = m_PCM / rho_solid; %volume of solid [m^3]
 
 percent_vol_change = (V_liquid - V_solid) / V_solid;
 
-%alpha = materialOPtions{n, 8} / (rho_liquid * c_p_liquid);
-%Bi = h_across_conv * pi * r^2 * l / (materialOPtions{n, 8} * A_noFin);
+alpha = materialOPtions{n, 8} / (rho_liquid * c_p_liquid);
+Bi = h_across_conv * pi * r^2 * l / (materialOPtions{n, 8} * A_noFin);
 
 
 %% Temperature Calculations
