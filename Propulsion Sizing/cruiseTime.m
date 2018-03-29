@@ -1,4 +1,4 @@
-function [ t_crusie_min ] = cruiseTime(A_cover, h_cruise, v_cruise, image_fov,  num_drones, num_days)
+function [ t_crusie_min ] = cruiseTime(A_cover, h_cruise, v_cruise, image_fov,  num_drones, num_days, t_accel_forward)
 % cruiseTime.m 
 % 
 % Description: 
@@ -25,7 +25,10 @@ function [ t_crusie_min ] = cruiseTime(A_cover, h_cruise, v_cruise, image_fov,  
 
 image_w = 2 * h_cruise * tand(image_fov/2); % Field of view width on the ground [m]
 
-t_crusie_sec = A_cover/(image_w * v_cruise * num_drones * num_days);    % [sec] Number of seconds each drone must fly per day 
+distance_accel_forward = 0.5 * v_cruise * t_accel_forward; % Distance covered during acceleration to and from cruise speed, assuming constant acceleration [m]
+A_cover_accel = distance_accel_forward * image_w * num_drones * num_days; % Area covered during horizontal accelerations by all drones over the mission duration [m^2]
+
+t_crusie_sec = (A_cover - A_cover_accel)/(image_w * v_cruise * num_drones * num_days);    % [sec] Number of seconds each drone must fly per day 
  
 t_crusie_min = t_crusie_sec / 60;   % convert output to [min]
 
