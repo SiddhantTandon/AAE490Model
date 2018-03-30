@@ -24,7 +24,7 @@ clear;close all;clc
     mass_blade = 8; %Blade_data(i,4);
     
 % Electronics Parameters
-    V_batt = 40;          % Battery voltage [V]
+    V_batt = 43.7377;          % Battery voltage [V]
     V_motor = 43.2;         %Motor Voltage [V]
     motor_eff = 0.85;     % Efficency factor between mechancial power and electrical power (= P_mech/P_elec)
     
