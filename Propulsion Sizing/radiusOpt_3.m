@@ -10,15 +10,15 @@ powerFactor = 1;                % Increase power by a factor to account for forw
 
 
 % Design Variables
-    number_blades = 4;
+    % number_blades = 4;
     
-    rho_blade = 1600; % density of blade material (carbon fiber for now) [kg/m^3]
+    %rho_blade = 1600; % density of blade material (carbon fiber for now) [kg/m^3]
     rho_cruise = rhoMars(h);   % air density on mars [kg/m^3]
     rho_vert = rhoMars(h/2);    % use average air density for climb/descent
-    t_blade = 0.02;     % average thickness of rotor blades [m]
+    %t_blade = 0.02;     % average thickness of rotor blades [m]
 %     Mrotors = 16.64;%20.332;%14.418;
-    Mrotors = 8;
-    fig_merit = 0.75;   % Figure of Merit (= P_ideal/P_hover)
+    Mrotors = 8;        % [kg]
+    %fig_merit = 0.75;   % Figure of Merit (= P_ideal/P_hover)
     k = 1.2;            % Aerodynamic correction factor
     Idraw = 349.625;   % Current required by the motors [A]
     A_body = 1; %m^2

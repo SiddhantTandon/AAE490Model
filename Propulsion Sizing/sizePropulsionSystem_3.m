@@ -37,7 +37,7 @@ clear;close all;clc
     num_days = 90;              % Number of Martian sols required to complete surveying area  
     drone_vert_rate = 6;        % [m/s]  Estimated ascent/descent rate of drone to/from cruise altitude
     accel_vert = 1;
-    accel_forward = 1;
+    accel_forward = 1;    
     beta_cruise = 10;                  % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
     beta_accel = 15;
 % Solar Flux Parameters 
@@ -83,16 +83,6 @@ clear;close all;clc
     excess_heat = P_elec_total - P_mech_total;
 
     mass_avail = mass_total - mass_batt - mass_rotor - mass_motors - mass_panel;        % Available mass left over after considering propulsion/power system 
-    
-%     success_blades(i).mass_avail = mass_avail;
-%     success_blades(i).mass_batt = mass_batt;
-%     success_blades(i).mass_motors = mass_motors;
-%     success_blades(i).mass_panel = mass_panel;
-%     success_blades(i).area_panel = area_panel;
-%     success_blades(i).P_mech_one_motor = P_mech_one_motor;
-%     success_blades(i).P_elec_one_motor = P_elec_one_motor;
-%     success_blades(i).excess_heat = excess_heat;
-% end
 
 %%%%%%%%%%%%%%%%%%%%%%%% OUTPUT %%%%%%%%%%%%%%%%%%%%%%%
 fprintf('Total mass of single drone (Input): %.1f kg\n',mass_total)
