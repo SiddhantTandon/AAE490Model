@@ -1,4 +1,4 @@
-function [Mbat, Mrotors, Mmotors,cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_elec_total] = radiusOpt_3(solidity, tipMach, Cdp, mass_total, radius_vector, numProp, flightTime, V_batt, motor_eff,  sun_time, solar_flux, h, drone_vert_rate, v_cruise, beta, accel_climb, accel_forward, mass_blade)
+function [Mbat, Mrotors, Mmotors,cap_batt, mass_panel, area_panel, radius_rotor, omega, P_mech_total, P_elec_total] = radiusOpt_3(solidity, tipMach, Cdp, mass_total, radius_vector, numProp, flightTime, V_batt, motor_eff,  sun_time, solar_flux, h, drone_vert_rate, v_cruise, beta_cruise, beta_accel, accel_climb, accel_forward, mass_blade)
 % This is a supplementary MATLAB code used to calculate the power required
 % for hover on Mars to size the required battery at various rotor radii.
 % Maximizing the remaining mass budget, we can find an optimal radius,
@@ -17,10 +17,11 @@ powerFactor = 1;                % Increase power by a factor to account for forw
     rho_vert = rhoMars(h/2);    % use average air density for climb/descent
     t_blade = 0.02;     % average thickness of rotor blades [m]
 %     Mrotors = 16.64;%20.332;%14.418;
+    Mrotors = 8;
     fig_merit = 0.75;   % Figure of Merit (= P_ideal/P_hover)
     k = 1.2;            % Aerodynamic correction factor
     Idraw = 349.625;   % Current required by the motors [A]
-    A_body = 2; %m^2
+    A_body = 1; %m^2
     Cd_body = 2;
 % Constants
     a = 240;     % speed of sound, m/s
@@ -44,7 +45,7 @@ for j=1:length(radius_vector)    % Iterate through many rotor radii
     [Time_descend_hr, P_descend, omega_descend(j)] = Power_Descend(weight, rho_vert, radius_vector(j), a, tipMach, Cdp, solidity, drone_vert_rate, h, A_body, Cd_body);
 
     % Calculate Power for Forward Flight
-    [P_forward, cap_batt_forward_accel, P_mech_forward_accel, P_elec_forward_accel] = Power_Forward_Flight(weight, rho_cruise, radius_vector(j), k, a, tipMach, Cdp, solidity, beta, v_cruise, accel_forward, Idraw, V_batt, motor_eff, numProp);
+    [P_forward, cap_batt_forward_accel, P_mech_forward_accel, P_elec_forward_accel] = Power_Forward_Flight(weight, rho_cruise, radius_vector(j), k, a, tipMach, Cdp, solidity, beta_cruise, beta_accel, v_cruise, accel_forward, Idraw, V_batt, motor_eff, numProp);
     
     % Total Hover Power
     P_mech_total_hover(j) = numProp * powerFactor * P_hover;     % multiply power to account for multiple propellers and for forward flight assuming 50% used for hover, 70% used for forward flight
@@ -85,12 +86,12 @@ for j=1:length(radius_vector)    % Iterate through many rotor radii
     cap_batt_climb(j) = capacityBattery( P_elec_total_climb(j), V_batt, Time_climb_hr, Idraw );     % Estimated battery capacity [A*hr]
     cap_batt_descend(j) = capacityBattery( P_elec_total_descend(j), V_batt, Time_descend_hr, Idraw);     % Estimated battery capacity [A*hr]
     cap_batt_forward(j) = capacityBattery( P_elec_total_forward(j), V_batt, flightTime_hr, Idraw); 
-    cap_batt(j) = cap_batt_forward(j) + cap_batt_climb(j) + cap_batt_descend(j) + cap_batt_climb_accel + cap_batt_forward_accel;
+    cap_batt(j) = (cap_batt_forward(j) + cap_batt_climb(j) + cap_batt_descend(j) + cap_batt_climb_accel + cap_batt_forward_accel);
     
-    Mbat(j) = massBattery( cap_batt(j), V_batt );                          % Mass of the battery required
+    Mbat(j) = 1.2 *massBattery( cap_batt(j), V_batt );                          % Mass of the battery required
 %     Mrotors(j) = numProp * rho_blade * t_blade * solidity * pi * radius_vector(j)^2;       % Mass of rotor blades
     
-    Power_consumption_array = [P_elec_one_motor_hover(j), P_elec_one_motor_climb(j), P_elec_one_motor_descend(j), P_elec_one_motor_forward(j), P_elec_one_motor_climb_accel(j)];
+    Power_consumption_array = 1.2*[P_elec_one_motor_hover(j), P_elec_one_motor_climb(j), P_elec_one_motor_descend(j), P_elec_one_motor_forward(j), P_elec_one_motor_climb_accel(j)];
     Max_power_elec(j) = max(Power_consumption_array);
     Mmotors(j) = (Max_power_elec(j)*7e-5 + 0.2135) * numProp * 2;                     % Rough correlation for motor mass 
                                                               % ^^^  Multiplied by 2 to achieve a more accurate estimation 
