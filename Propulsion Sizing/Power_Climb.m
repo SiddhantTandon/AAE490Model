@@ -1,10 +1,12 @@
 function [Time_climb_hr, P_climb, omega_climb, cap_batt_climb_accel_total, P_mech_climb_accel, P_elec_climb_accel, t_climb_accel] = Power_Climb(weight, rho, radius, a, tipMach, Cdp, s, Vclimb ,h, A_body, Cd_body, Idraw, V_batt, motor_eff, accel_climb, numProp)
 
 % Calculate Power and battery capacity needed to accelerate to climb speed
-Vclimb_0 = 0; %m/s
-Vclimb_final = Vclimb; %m/s
+Vclimb_0 = 0; % Initial vertical velocity of vehicle [m/s]
+Vclimb_final = Vclimb; % Final vertical velocity of vehicle [m/s]
+
+
 i = 1;
-for Vclimb = Vclimb_0:0.2:Vclimb_final
+for Vclimb = Vclimb_0:0.2:Vclimb_final % 
     Drag = 0.5*rho*A_body*Vclimb^2*Cd_body;
     vehicle_mass = weight/3.71;
     Tclimb = vehicle_mass*accel_climb + Drag + weight;
@@ -41,7 +43,7 @@ for Vclimb = Vclimb_final:-0.2:Vclimb_0
     i = i + 1;
 end
 
-cap_batt_climb_accel_total = sum(cap_batt_climb_accel) + sum(cap_batt_climb_accel_2); %A*hr
+cap_batt_climb_accel_total = 4 * (sum(cap_batt_climb_accel) + sum(cap_batt_climb_accel_2)); %A*hr
 P_mech_climb_accel = max([max(P_mech_climb_accel), max(P_mech_climb_accel_2)]);
 P_elec_climb_accel = max([max(P_elec_climb_accel), max(P_elec_climb_accel)]);
 t_climb_accel = 2*(Vclimb_final - Vclimb_0)/accel_climb; %s
