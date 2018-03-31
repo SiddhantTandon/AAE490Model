@@ -19,7 +19,8 @@ flightTime_hr = flightTime/60;    % Convert flight time from [min] to [hr]
     Idraw = 349.625;                % Current required by the motors [A]
     A_body = 1; %m^2                % Estimated frontal area of vehicle [m^2]
     Cd_body = 2;                    % Estimated drag coefficient of vehcile (rectangular box)
-% Constants
+
+    % Constants
     a = 240;                        % speed of sound, m/s
     g_m = 3.71;                     % Gravity on mars, m/s^2
     weight =  mass_total * g_m /numProp;  % [N] weight that each rotor must support in hover 
@@ -34,7 +35,7 @@ flightTime_hr = flightTime/60;    % Convert flight time from [min] to [hr]
     [P_descend, Time_descend_hr, t_descend_accel_hr] = Power_Descend(weight, rho_vert, radius_vector, a, tipMach, Cdp, solidity, drone_vert_rate, h, A_body, Cd_body, numProp, accel_vert);
 
     % Calculate Power for Forward Flight
-    [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight, rho_cruise, radius_vector, k, a, tipMach, Cdp, solidity, beta_cruise, beta_accel, v_cruise, accel_forward, Idraw, V_batt, motor_eff, numProp);
+    [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight, rho_cruise, radius_vector, k, a, tipMach, Cdp, solidity, beta_cruise, beta_accel, v_cruise, accel_forward);
     
     % Total Hover Power
     P_mech_total_hover = numProp * P_hover;                         % multiply power to account for multiple rotors

@@ -1,4 +1,4 @@
-function [ volume_batt, num_series, num_parallel2, total_cells, R ] = volBattery(V_batt, P_elec_total, t_flight)
+function [ volume_batt, num_series, num_parallel2, total_cells, R ] = voluBattery(V_batt, V_motor, P_elec_total, t_flight)
 %
 % Description: 
 %   Calculate the volume of the resultant battery system based on the
@@ -6,6 +6,7 @@ function [ volume_batt, num_series, num_parallel2, total_cells, R ] = volBattery
 %
 % Inputs:
 %   V_batt - voltage of the battery 
+%   V_motor - Voltage of the motor
 %   P_elec_total - total electric power required
 %   t_flight - time the UMASS is in flight
 %
@@ -16,7 +17,6 @@ function [ volume_batt, num_series, num_parallel2, total_cells, R ] = volBattery
 %   total_cells - totall number of battery cells in resulting configuration
 %   R - Internal resistance of total battery given internal resistance of one cell
 
-V_motor = 43.2; %Voltage of the motor
 discharge_percent = 0.7;
 cap_batt = 3; %AH
 E_req = P_elec_total * t_flight * 60; % [W]*[hr]* 3600[s/hr] = W*s = J

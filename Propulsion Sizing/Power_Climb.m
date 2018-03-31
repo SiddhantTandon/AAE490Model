@@ -1,4 +1,4 @@
-function [P_climb, P_climb_accel, omega_climb, Time_climb_hr, t_climb_accel_hr] = Power_Climb(weight, rho, radius, a, tipMach, Cdp, s, Vclimb ,h, A_body, Cd_body, Idraw, V_batt, motor_eff, accel_climb, numProp)
+function [P_climb, P_climb_accel, omega_climb, Time_climb_hr, t_climb_accel_hr] = Power_Climb(weight, rho, radius, a, tipMach, Cdp, s, Vclimb ,h, A_body, Cd_body, accel_climb, numProp)
 % Description:
 %   Calculates the power required by each rotor for constant velocity
 %   vertical climb and acceleration/deceleration to/from the climb
@@ -21,11 +21,6 @@ for t = 0.1:t_step:t_accel
     omega_climb = Vtip_climb / radius;                      % Rotation rate of rotor [rad/s]
     Pp_climb = (Cdp * s * rho / 8) * (omega_climb*radius)^3 * (pi*radius^2);    % Power required to overcome drag of rotor blades [W]
     P_climb_accel(i) = (Tclimb*(Vclimb + v_i_climb) + Pp_climb);              % Total power required by each rotor to accelerate in climb [W]
-    
-%     P_mech_climb_accel(i) = numProp * P_climb(i);
-%     P_elec_climb_accel(i) = P_mech_climb_accel(i)/motor_eff;     % Convert from mechanical to electrical power
-    %cap_batt_climb_accel(i) = capacityBattery( P_elec_climb_accel(i), V_batt, 0.2/3600, Idraw );
-    
     i = i + 1;
 end
 
@@ -42,11 +37,7 @@ for t = 0.1:t_step:t_accel
     omega_climb = Vtip_climb / radius;
     Pp_climb = (Cdp * s * rho / 8) * (omega_climb*radius)^3 * (pi*radius^2);
     P_climb_decel(i) = (Tclimb*(Vclimb + v_i_climb) + Pp_climb);
-    
-%     P_mech_climb_accel_2(i) = numProp * P_climb_2(i);
-%     P_elec_climb_accel_2(i) = P_mech_climb_accel_2(i)/motor_eff;     % Convert from mechanical to electrical power
-    %cap_batt_climb_accel_2(i) = capacityBattery( P_elec_climb_accel_2(i), V_batt, 0.2/3600, Idraw );
-    
+      
     i = i + 1;
 end
 

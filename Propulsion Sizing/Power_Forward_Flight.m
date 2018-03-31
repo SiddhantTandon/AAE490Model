@@ -1,4 +1,4 @@
-function [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight, rho, radius, k, a, tipMach, Cdp, s, beta_cruise, beta_accel, V_inf, accel_forward, Idraw, V_batt, motor_eff, numProp)
+function [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight, rho, radius, k, a, tipMach, Cdp, s, beta_cruise, beta_accel, V_inf, accel_forward)
 
 % Constants
 k_span_drag = 4.6;          % factor due to spanwise drag, value taken from textbook Ch 5, pg 133

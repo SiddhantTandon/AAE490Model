@@ -4,14 +4,11 @@ clear;close all;clc
 % drone based on a number of design parameters Also estimate masses of
 % indivudial components of the propulsion system for a single drone 
 
-% load('success_blades.mat');
-
-% for i = 1:length(success_blades)
 % Vehicle Design Inputs
     mass_total = 60;     % Total vehicle mass including payload [kg] 
-    numProp = 4;          % Total number of propeller/motor combinations (4 for quadcopter) 
 
 % Aerodynamic/rotor parameters
+    numProp = 4;          % Total number of propeller/motor combinations (4 for quadcopter) 
     solidity = 0.32;                    % Blade Solidity
     tipMach = 0.7;                      % Tip Mach Number, chosen to be fixed value
     Cd_blade_avg = 0.077;               % Average Drag Coefficient for blade
@@ -35,10 +32,10 @@ clear;close all;clc
     accel_forward = 2;          % [m/s^2] horizontal acceleration
     beta_cruise = 10;           % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
     beta_accel = 15;            % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
+
 % Solar Flux Parameters 
-% Chosen ROI
     mission_lat = 18;           % Geographic latitude of the mission on Mars Surface [deg] (Range between -90 and 90 deg)
-    solar_lon = 275;            % Angular position of Mars around the Sun [deg], based on time of year (0Â° corresponds to northern vernal equinox)
+    solar_lon = 275;            % [deg] (NOT MARTIAN SOLS) Angular position of Mars around the Sun based on time of year (0 deg corresponds to northern vernal equinox)
     
   
 %%%%%%%%%%%%%%%%%%%%%%%% CALCULATIONS %%%%%%%%%%%%%%%%%%%%%%%%
