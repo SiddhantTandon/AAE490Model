@@ -12,13 +12,13 @@ function [ t_crusie_min ] = cruiseTime(A_cover, h_cruise, v_cruise, image_fov,  
 %   image_fov - Left to right field of view (full sweep) angle of the sensor [deg]   
 %   num_drones - Total number of drones used to cover the area   
 %   num_days - Total number of sols where flights occur 
-%   t_accel_decel_forward - Time required to accelerate and decelerate in the forward direction [sec]
+%   t_accel_decel_forward - 
 % 
 % Outputs:
 %   t_crusie_min - Required cruise time per Martian sol to completely cover given area [min]
 % 
 % ASSUMPTIONS:
-%   Constant acceleration to a fixed cruise velocity, and constant deceleration from the same velocity (acceleration value chosen in main script)
+%   ConConstant cruise velocity  ???
 %   Constant cruise altitude above the surface
 %   Full utilization of field of view angle from sensors 
 %   No backtracking, overlap, or repeat coverage of sensor passes 
@@ -31,7 +31,7 @@ A_cover_accel = distance_accel_forward * image_w * num_drones * num_days; % Area
 
 t_crusie_sec = (A_cover - A_cover_accel)/(image_w * v_cruise * num_drones * num_days);    % [sec] Number of seconds each drone must fly per day 
  
-t_crusie_min = (t_crusie_sec + t_accel_decel_forward)/ 60;   % convert output to [min]
+t_crusie_min = t_crusie_sec / 60;   % convert output to [min]
 
 end
 
