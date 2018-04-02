@@ -14,7 +14,7 @@ function [P_descend, Time_descend_hr, t_descend_accel_hr] = Power_Descend(weight
     v_i_0 = sqrt(Tdescend/(2*rho*pi*radius^2));
     Vdescend = 2.01*v_i_0; %m/s
     
-    v_i_descend = Vdescend/2 - sqrt((Vdescend/2)^2 - v_i_0^2);
+    v_i_descend = Vdescend/2 + sqrt((Vdescend/2)^2 - v_i_0^2);
     Vtip_descend = tipMach * a;
     omega_descend = Vtip_descend / radius;
     Pp_descend = (Cdp * s * rho / 8) * (omega_descend*radius)^3 * (pi*radius^2);
