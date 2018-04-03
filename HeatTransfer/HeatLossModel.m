@@ -21,11 +21,10 @@ Irrelevant variables:
 
 
 % Environmental Constants
-g = 3.711; %gravitational acceleration [m/s^2]
 sigma = 5.67e-8; %Stefan-Boltzmann Constant [W/m^2*K^4]
 
 v = 26.8; %maximum expected freestream velocity at the surface
-T_mars = -120; %minimum ambient temperature on Mars [C]
+T_mars = -100; %minimum ambient temperature on Mars [C]
 c_p = 730; %specific heat capacity Mars atmosphere [m/s^2*K]
 rho = 0.0139; %atmospheric density [kg/m^3]
 k = 0.0096; %thermal conductivity [W/m*K]
@@ -43,7 +42,7 @@ T_drone = T_drone + 273.15; %convert to K
 
 
 %Drone Surface Area
-L_drone = 1; %length of one drone side panel [m]
+L_drone = 0.5; %length of one drone side panel [m]
 H_drone = 0.157; %height of drone core[m]
 A_drone = L_drone * L_drone * 2 + L_drone * H_drone * 4; %surface area of the top, bottom, and sides of the main drone housing [m^2]
 
@@ -61,6 +60,9 @@ Q_conv = h_conv * A_drone * deltaT; %power dissipation via convection [J/s]
 
 % Radiative heat transfer
 Q_rad = epsilon * sigma * A_drone * (T_drone^4 - T_mars^4); %power dissipation via radiation [J/s]
+
+%Rate of Heat Loss
+Q_total = (Q_rad + Q_conv); %Rate of heat loss [J/s]
 
 %Total Heat Loss
 E_loss = t * (Q_rad + Q_conv); %Total energy loss [J]
