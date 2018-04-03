@@ -31,7 +31,8 @@ A_cover_accel = distance_accel_forward * image_w * num_drones * num_days; % Area
 
 t_crusie_sec = (A_cover - A_cover_accel)/(image_w * v_cruise * num_drones * num_days);    % [sec] Number of seconds each drone must fly per day 
  
-t_crusie_min = (t_crusie_sec + t_accel_decel_forward)/ 60;   % convert output to [min]
+%t_crusie_min = (t_crusie_sec + t_accel_decel_forward)/ 60;   % convert output to [min]
+t_crusie_min = t_crusie_sec/ 60;   % convert output to [min]
 
 end
 

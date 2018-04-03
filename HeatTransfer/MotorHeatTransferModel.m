@@ -40,12 +40,12 @@ mu_Mars = 1.422e-5; %dynamic viscosity [m^2/s]
 Pr = mu_Mars * c_p_Mars / k_Mars; %Prandtl number
 
 % Motor Specifications
-P_rotor = 3181; %power required by 1 rotor [W]
+P_rotor = 4329; %power required by 1 rotor [W]
 eta = 0.85; %motor efficiency [fraction]
-m_motor = 0.95; %motor mass [kg]
+m_motor = 1.25; %motor mass [kg]
 c_motor = 100; %approximate specific heat of motor (ranges from 15 to 420 for metals) [W/m*K]
-r = 0.05; %motor radius [m]
-l = 0.2; %motor height [m]
+r = 0.04; %motor radius [m]
+l = 0.075; %motor height [m]
 epsilon = 0.98; %motor surface emmisivity
 
 A_noFin = (2 * pi * r * l + 2 * pi * r^2); %surface area of motor (no fins) [m^2]

@@ -138,9 +138,10 @@ clear;close all;clc
     cap_batt_climb_accel = capacityBattery( P_elec_total_climb_accel, V_batt, t_climb_accel_hr, I_draw );
     cap_batt_descend = capacityBattery( P_elec_total_descend, V_batt, Time_descend_hr, I_draw);     % Estimated battery capacity [A*hr]
     cap_batt_descend_accel = capacityBattery( P_elec_total_descend_accel, V_batt, t_descend_accel_hr, I_draw);
-    cap_batt_forward = capacityBattery( P_elec_total_forward, V_batt, t_flight_hr, I_draw); 
+    cap_batt_forward = capacityBattery( P_elec_total_forward, V_batt, t_cruise_hr, I_draw); 
     cap_batt_forward_accel = capacityBattery( P_elec_total_forward_accel, V_batt, t_forward_accel_hr, I_draw); 
     cap_batt = 1.2*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel);
+
     
     mass_batt = massBattery(cap_batt, V_batt);                          % Mass of the battery required
 
