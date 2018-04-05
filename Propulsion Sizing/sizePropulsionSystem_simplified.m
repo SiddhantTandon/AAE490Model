@@ -127,7 +127,7 @@ clear;close all;clc
     
     % NEED TOTAL or MAX?
     P_mech_total = max([P_mech_total_hover, P_mech_total_climb, P_mech_total_descend, P_mech_total_forward, P_mech_total_climb_accel, P_mech_total_descend_accel, P_mech_total_forward_accel]);
-    P_elec_total = P_mech_total/motor_eff;
+    P_elec_total = 1.1 * P_mech_total/motor_eff;
     I_draw = P_elec_total/V_motor;  % Current thru motor [Amps]
     Power_consumption_array = [P_elec_one_motor_hover, P_elec_one_motor_climb, P_elec_one_motor_climb_accel, P_elec_one_motor_descend, P_elec_one_motor_descend_accel, P_elec_one_motor_forward, P_elec_one_motor_forward_accel];
     Max_power_elec = max(Power_consumption_array);
@@ -141,7 +141,7 @@ clear;close all;clc
     cap_batt_descend_accel = capacityBattery( P_elec_total_descend_accel, V_batt, t_descend_accel_hr, I_draw);
     cap_batt_forward = capacityBattery( P_elec_total_forward, V_batt, t_cruise_hr, I_draw); 
     cap_batt_forward_accel = capacityBattery( P_elec_total_forward_accel, V_batt, t_forward_accel_hr, I_draw); 
-    cap_batt = 1.2*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel);
+    cap_batt = 1.3*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel);
 
     
     mass_batt = massBattery(cap_batt, V_batt);                          % Mass of the battery required
