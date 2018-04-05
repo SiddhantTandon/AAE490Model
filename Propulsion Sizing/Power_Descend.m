@@ -23,3 +23,4 @@ function [P_descend, Time_descend_hr, t_descend_accel_hr] = Power_Descend(weight
         P_descend = 1.2*Tdescend*(Vdescend - v_i_descend) + Pp_descend;
     else
         P_descend = P_hover;
+    end
