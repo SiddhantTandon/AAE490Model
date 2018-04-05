@@ -19,7 +19,7 @@ clear;close all;clc
     Cd_blade_avg = 0.077;               % Average Drag Coefficient for blade
     blade_radius = 0.65;               % Blade radius [m]
     mass_blades = 8.00;                   % Estimated Mass of all blades [kg]
-    A_body = 1;                     % [m^2] Estimated frontal area of vehicle
+    A_body = 2;                     % [m^2] Estimated frontal area of vehicle
     Cd_body = 2;                    % Estimated drag coefficient of vehcile (rectangular box)
 
 % Electronics Parameters
@@ -37,9 +37,9 @@ clear;close all;clc
     num_days = 90;              % [sols] Number of Martian sols required to complete surveying area  
     drone_vert_rate = 10;       % [m/s]  Estimated ascent/descent rate of drone to/from cruise altitude
     accel_vert = 1;             % [m/s^2] vertical acceleration
-    accel_forward = 2;          % [m/s^2] horizontal acceleration
+    accel_forward = 1;          % [m/s^2] horizontal acceleration
     beta_cruise = 10;           % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
-    beta_accel = 15;            % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
+    beta_accel = 23;            % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
 
 % Solar Flux Parameters 
     mission_lat = 18;           % [deg] Geographic latitude of the mission on Mars Surface (Range between -90 and 90 deg)
@@ -65,6 +65,7 @@ clear;close all;clc
     t_accel_decel_vert = 4*drone_vert_rate/accel_vert; % time to accelerate and decelerate to/from vertical velocity (includes climb and descent) [s]
     distance_accel_vert = 0.5 * drone_vert_rate * t_accel_decel_vert; % distance travelled during vertical acceleration/deceleration (includes climb and descent) [m]
     t_cruise = cruiseTime(A_cover, h_cruise, v_cruise, sensor_fov, num_drones, num_days, t_accel_decel_forward);     % Required Flight Time [min]
+    t_cruise_hr = t_cruise/60;      % Convert cruise time from [min] to [hr]
     t_flight = t_cruise + t_accel_decel_forward/60 + t_accel_decel_vert/60 + 2*((h_cruise - 0.5*distance_accel_vert)/drone_vert_rate)/60;    % Add fixed number of minutes for climb/descent [min]
     t_flight_hr = t_flight/60;    % Convert flight time from [min] to [hr]
 
