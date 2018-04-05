@@ -77,7 +77,7 @@ clear;close all;clc
     [P_climb, P_climb_accel, omega_climb, Time_climb_hr, t_climb_accel_hr] = Power_Climb(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, accel_vert, numProp);
 
     % Calculate Power to Descend
-    [P_descend, Time_descend_hr, t_descend_accel_hr] = Power_Descend(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, numProp, accel_vert);
+    [P_descend, Time_descend_hr, t_descend_accel_hr] = Power_Descend(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, numProp, accel_vert, P_hover);
 
     % Calculate Power for Forward Flight
     [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight_one_rotor, rho_cruise, blade_radius, k, a, tipMach, Cd_blade_avg, solidity, beta_cruise, beta_accel, v_cruise, accel_forward);
