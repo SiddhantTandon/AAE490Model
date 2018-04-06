@@ -21,7 +21,7 @@ Irrelevant variables:
 %% Constants/Inputs
 
 % Motor Operational Specifications
-T_motor_max = 70; %maximum allowable motor temperature [C]
+T_motor_max = 110; %maximum allowable motor temperature [C]
 T_motor_min = -20; %minimum allowable motor temperature
 t = 10 * 60; %flight time [s]
 v_freestream = 30; %flight velocity [m/s]
@@ -93,90 +93,6 @@ Q_dot_rad = epsilon * sigma * A_noFin * (T_motor_max^4 - T_mars^4); %power dissi
 % Remaining heat to dissipate
 Q_dot_remainder_baseline = P_waste - Q_dot_accum - Q_dot_rad - max(Q_dot_across_conv, Q_dot_down_conv);
 
-
-%{
-%% Heat Pipes
-
-lengthPipes = 1; %pipe length in m
-
-linearDensity = 0.0184 / 0.3; %18.4g/300mm
-Q_dotPerPipe = 30; %can transfer 30W per pipe
-
-numPipes = round(Q_dot_remainder / Q_dotPerPipe);
-
-massPipes = numPipes * linearDensity * lengthPipes;
-Q_dot_pipe_total = numPipes * Q_dotPerPipe;
-
-fprintf('Number of Pipes: %d\n', numPipes);
-fprintf('Total Pipe Mass: %.2f kg\n', massPipes);
-fprintf('Heat dissipation rate: %.2f W\n', Q_dot_pipe_total);
-% DOESN'T INCLUDE MASS OF HEAT SINKS
-%}
-
-%% Phase Change Materials
-%{
-Notes:
-1) Sized assuming no convective or radiative heat transfer
-2) Cell array structure: {material, T_melt, H_delta_fus, c_p_liquid, c_p_solid
-                            rho_solid, rho_liquid, k}
-3) List of phase change materials: https://en.wikipedia.org/wiki/Phase-change_material
-4) Many tunable PCM materials available
-%}
-
-% Material Properties
-n = 2; %index of PCM material for analysis
-materialOPtions = {'water'          , 0 , 300000, 4187, 2108, 916 , 995 , 2   ;
-                   '0400-Q20 BioPCM', 20, 215000, 3200, 3500, 1075, 1125, 0.45};
-
-PCM = materialOPtions{n, 1}; %phase change material
-T_melt = materialOPtions{n, 2}; %melting point [C]
-H_delta_fus = materialOPtions{n, 3}; %latent heat of fusion [J/kg]
-c_p_liquid = materialOPtions{n, 4}; %heat capacity of liquid [J/kg*K]
-c_p_solid = materialOPtions{n, 5}; %heat capacity of solid [J/kg*K]
-rho_solid = materialOPtions{n, 6}; %density of solid [kg/m^3]
-rho_liquid = materialOPtions{n, 7}; %density of liquid at maximum temp [kg/m^3]
-
-T_melt = T_melt + 273.15; %melting point [K]
-T_0 = max(T_mars, T_motor_min);
-T_f = T_motor_max;
-
-% Energy absorbtion from heating solid
-if T_melt > T_0
-    Q_solid_1kg = c_p_solid * (T_melt - T_0);
-else
-    Q_solid_1kg = 0;
-end
-
-% Energy absorbtion from melting
-if T_melt <= T_f
-    Q_melt_1kg = H_delta_fus;
-else
-    Q_melt_1kg = 0;
-end
-
-% Energy abosrtion from heating liquid
-if T_melt < T_f
-    Q_liquid_1kg = c_p_liquid * (T_f - T_melt);
-else
-    Q_liquid_1kg = 0;
-end
-
-% Total energy absorbably in change from T_0 to T_f
-c_p_total = Q_solid_1kg + Q_melt_1kg + Q_liquid_1kg; %total heat capacity [J/kg]
-
-% Mass of system
-m_PCM = E_waste / c_p_total; %mass of PCM required to absorb heat [kg]
-m_PCM_struc = m_PCM * 0.25; %estimate of additional structurla mass required [kg]
-
-V_liquid = m_PCM / rho_liquid; %volume of liquid [m^3]
-V_solid = m_PCM / rho_solid; %volume of solid [m^3]
-
-percent_vol_change = (V_liquid - V_solid) / V_solid;
-
-alpha = materialOPtions{n, 8} / (rho_liquid * c_p_liquid);
-Bi = h_across_conv * pi * r^2 * l / (materialOPtions{n, 8} * A_noFin);
-
-
 %% Temperature Calculations
 
 T_f_motor_insulated = E_waste / (m_motor * c_motor) + T_mars; 
@@ -214,21 +130,3 @@ fprintf('   Remaining heat to be dissipated: %.2f W\n\n', Q_dot_remainder_baseli
 fprintf('Motor Temperatures:\n')
 fprintf('      Motor Temperature with no dissipation: %.2f K\n', T_f_motor_insulated);
 fprintf('Motor Temperature with baseline dissipation: %.2f K\n\n', T_f_motor_baseline);
-
-% Solution
-fprintf('Cooling Method: Phase Change Materials\n')
-fprintf('Material: %s\n', PCM);
-if ((T_f - T_melt) < 5)
-    fprintf('WARNING: melting temp. close to max motor operating temp.\n');
-end
-fprintf('Mass of PCM: %.2f kg\n', m_PCM);
-fprintf('Approximate Mass of Additional Structure: %.2f kg\n', m_PCM_struc);
-fprintf('Approximate Total Mass: %.2f kg\n', m_PCM_struc + m_PCM);
-if V_liquid > V_solid
-    fprintf('Maximum Volume of PCM: %.2f [L] (liquid volume at max temp)\n', V_liquid * 1000)
-else 
-    fprintf('Maximum Volume of PCM: %.2f [L] (solid volume)\n', V_solid * 1000)
-end
-fprintf('Percentage change in volume: %.2f%%\n', percent_vol_change*100)
-
-
