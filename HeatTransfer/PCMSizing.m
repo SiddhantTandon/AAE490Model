@@ -4,6 +4,8 @@ close
 
 %% Constants/Inputs
 
+n = 2; %index of PCM material for analysis
+
 % Motor Operational Specifications
 T_motor_max = 110; %maximum allowable motor temperature [C]
 T_motor_min = -20; %minimum allowable motor temperature
@@ -13,7 +15,7 @@ t = 10 * 60; %flight time [s]
 T_mars = 0; %ambient temperature on Mars [C]
 
 % Motor Specifications
-P_waste = 600; %Set power lost by 1 motor for consistancy [W]
+P_waste = 650*1.2; %Set power lost by 1 motor for consistancy [W]
 E_waste = P_waste * t;
 
 T_mars = T_mars + 273.15; %convert to K
@@ -33,7 +35,6 @@ Notes:
 %}
 
 % Material Properties
-n = 1; %index of PCM material for analysis
 materialOptions = {'Water'                ,   0, 300000, 4187, 2108, 916 , 995 , 2   ;
                    '0400-Q20 BioPCM (Wax)',  20, 215000, 3200, 3500, 1075, 1125, 0.45;
                    '0100-Q50 BioPCM (Wax)', -50, 215000, 3200, 3500, 1075, 1075, 0.45;
@@ -148,14 +149,12 @@ legend(materialOptions{:, 1});
 
 % Annotations
 annotation('arrow', [0.55, 0.65], [0.05, 0.05])
-annotation('textbox', [0.4, 0.025, 0.3, 0.05], 'EdgeColor', 'none', 'FontWeight', 'bold', 'string', {'Flight Time'});
+annotation('textbox', [0.4, 0.025, 0.3, 0.05], 'EdgeColor', 'none',...
+           'FontWeight', 'bold', 'string', {'Flight Time'});
 annotation('textbox', [0.7, 0.3, 0.3, 0.05], 'EdgeColor', 'none', 'string', {'Water'});
 annotation('textbox', [0.7, 0.4, 0.3, 0.05], 'EdgeColor', 'none', 'string', {'Wax 04'});
 annotation('textbox', [0.7, 0.5, 0.3, 0.05], 'EdgeColor', 'none', 'string', {'Inorganic'});
 annotation('textbox', [0.7, 0.7, 0.3, 0.05], 'EdgeColor', 'none', 'string', {'Wax 01'});
-
-
-
 
 %% Results
 
