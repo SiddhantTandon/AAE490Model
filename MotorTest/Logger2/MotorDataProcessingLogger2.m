@@ -38,7 +38,7 @@ current = data(:, 28); %[A] current reading doesn't work
 rotRate = data(:, 18); %[rpm]
 
 %% Derived Results
-%{
+
 rotRate = rotRate / polesMotor;
 
 omega = 2 * pi * rotRate / 60; %rotation rate [rad/s]
@@ -63,9 +63,9 @@ for n = 2 : length(omega) - 1
 end
 
 Iz = torque ./ alpha;
-%}
+
 %% Total Plots
-%{
+
 figure(1)
 
 subplot(2, 3, 1)
@@ -76,6 +76,9 @@ title('Throttle vs. t')
 
 subplot(2, 3, 2)
 plot(time, powerDraw)
+hold on
+plot([0, max(time)], [4032, 4032], ':');
+hold off
 xlabel('time [s]')
 ylabel('Power Draw [W]')
 title('Power Draw vs. t')
@@ -88,6 +91,9 @@ title('Voltage vs. t')
 
 subplot(2, 3, 4)
 plot(time, current)
+hold on
+plot([0, max(time)], [80, 80], ':');
+hold off
 xlabel('time [s]')
 ylabel('Current [A]')
 title('Current vs. t')
@@ -103,7 +109,7 @@ plot(time, torque)
 xlabel('time [s]')
 ylabel('Torque [Nm]')
 title('Torque vs. t')
-%}
+
 %% Results from Specific Data Sets
 %{
 figure(2)
