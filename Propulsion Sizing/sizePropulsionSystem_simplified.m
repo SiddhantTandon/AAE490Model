@@ -48,7 +48,9 @@ clear;close all;clc
 % Constants
     a = 240;                        % speed of sound, m/s
     g_m = 3.71;                     % Gravity on mars, m/s^2
-  
+
+% Factors of Safety
+FoS_elec_motor_power = 1.1;
   
 %%%%%%%%%%%%%%%%%%%%%%%% CALCULATIONS %%%%%%%%%%%%%%%%%%%%%%%%
 % Preliminary Calculations
@@ -127,7 +129,7 @@ clear;close all;clc
     
     % NEED TOTAL or MAX?
     P_mech_total = max([P_mech_total_hover, P_mech_total_climb, P_mech_total_descend, P_mech_total_forward, P_mech_total_climb_accel, P_mech_total_descend_accel, P_mech_total_forward_accel]);
-    P_elec_total = 1.1 * P_mech_total/motor_eff;
+    P_elec_total = P_mech_total/motor_eff * FoS_elec_motor_power;
     I_draw = P_elec_total/V_motor;  % Current thru motor [Amps]
     Power_consumption_array = [P_elec_one_motor_hover, P_elec_one_motor_climb, P_elec_one_motor_climb_accel, P_elec_one_motor_descend, P_elec_one_motor_descend_accel, P_elec_one_motor_forward, P_elec_one_motor_forward_accel];
     Max_power_elec = max(Power_consumption_array);
@@ -181,7 +183,7 @@ clear;close all;clc
     
     V_batt_chk = I_draw*R + V_motor; %should be equal to V_batt, adjust V_batt to equal V_batt_chk
     
-    excess_heat = P_elec_total - P_mech_total;
+    excess_heat = P_elec_total/FoS_elec_motor_power - P_mech_total;   % no FoS on this value
 
     mass_avail = mass_total - mass_batt - mass_blades - mass_all_motors - mass_all_ESC - mass_panel;        % Available mass left over after considering propulsion/power system 
     
