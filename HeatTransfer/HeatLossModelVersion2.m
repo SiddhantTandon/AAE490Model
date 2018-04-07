@@ -33,7 +33,8 @@ epsilon = 0.05; %drone surface emissivity (0.05 for gold coating)
 
 % Operational Specifications
 T_drone = -20; %minimum safe operating temperature of the drone [C]
-t = 60 * 60 * 12; %length of heat loss (typically length of night) [s]
+t_h = 13.65; %number of hours to calculate total heat loss for (typically length of night) 
+t = 60 * 60 * t_h; %length of heat loss converted to seconds [s]
 
 %Temperature 
 deltaT = T_drone - T_mars; %temp. difference between motor & atmosphere
@@ -74,9 +75,29 @@ E_loss = t * (Q_rad + Q_conv); %Total energy loss [J]
 
 
 % Assumptions
-fprintf('\nAssumed Conditions:\n')
+fprintf('\nAssumed Conditions:\n');
+fprintf('    1) Laminar flow over drone body\n');
+fprintf('    2) Uniform heat distribution\n');
+fprintf('    3) Neglect conduction\n\n');
 
+%Environmental Conditions
+fprintf('Environmental Conditions:\n');
+fprintf('    Surface Temperature: %.2f kelvin\n', T_mars);
+fprintf('    Drone Temperature: %.2f kelvin\n', T_drone);
+fprintf('    Wind Speed: %.2f m/s\n\n', v_freestream)
+
+%Drone Body Configuration
+fprintf('Drone Body Configuration:\n');
+fprintf('    Drone body height: %.2f m\n',h_drone);
+fprintf('    Drone body radius: %.2f m\n',r);
+fprintf('    Drone body surface area: %.2f m^2\n\n',A_drone);
 
 % Heat Loss Rates
 fprintf('Heat Loss Rates:\n');
+fprintf('    Heat loss rate due to radiation: %.2f W\n',Q_rad);
+fprintf('    Heat loss rate due to convection: %.2f W\n',Q_conv);
+fprintf('    Total heat loss rate: %.2f W\n\n',Q_total);
+
+% Total Heat Loss
+fprintf('Total heat loss for %.2f hours: %.2f J\n', t_h,E_loss);
 
