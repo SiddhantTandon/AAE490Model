@@ -50,8 +50,11 @@ clear;close all;clc
     g_m = 3.71;                     % Gravity on mars, m/s^2
 
 % Factors of Safety
-FoS_elec_motor_power = 1.1;
-  
+    FoS_elec_motor_power = 1.1;
+    FoS_m_panel = 1.5;
+    FoS_area_panel = 1.4;
+    FoS_cap_batt = 1.3;
+
 %%%%%%%%%%%%%%%%%%%%%%%% CALCULATIONS %%%%%%%%%%%%%%%%%%%%%%%%
 % Preliminary Calculations
     weight_one_rotor =  mass_total * g_m /numProp;  % [N] weight that each rotor must support in hover 
@@ -143,7 +146,7 @@ FoS_elec_motor_power = 1.1;
     cap_batt_descend_accel = capacityBattery( P_elec_total_descend_accel, V_batt, t_descend_accel_hr, I_draw);
     cap_batt_forward = capacityBattery( P_elec_total_forward, V_batt, t_cruise_hr, I_draw); 
     cap_batt_forward_accel = capacityBattery( P_elec_total_forward_accel, V_batt, t_forward_accel_hr, I_draw); 
-    cap_batt = 1.3*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel);
+    cap_batt = FoS_cap_batt*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel);
 
     
     mass_batt = massBattery(cap_batt, V_batt);                          % Mass of the battery required
@@ -174,8 +177,8 @@ FoS_elec_motor_power = 1.1;
     P_panel = energy_batt / (sun_time);                  % [W]
     [ area_panel, mass_panel ] = sizeSolarPanel(P_panel, solar_flux);  % [kg]
     
-    mass_panel = 1.5*mass_panel; % [kg] Apply factor of safety 
-    area_panel = 1.4*area_panel; % [m^2] Apply factor of safety 
+    mass_panel = FoS_m_panel*mass_panel; % [kg] Apply factor of safety 
+    area_panel = FoS_area_panel*area_panel; % [m^2] Apply factor of safety 
 
 
 % Find battery specs
