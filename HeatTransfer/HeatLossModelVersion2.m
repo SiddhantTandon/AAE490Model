@@ -90,7 +90,7 @@ fprintf('    Wind Speed: %.2f m/s\n\n', v_freestream)
 fprintf('Drone Body Configuration:\n');
 fprintf('    Drone body height: %.2f m\n',h_drone);
 fprintf('    Drone body radius: %.2f m\n',r);
-fprintf('    Drone body surface area: %.2f m^2\n',A_drone);
+fprintf('    Drone body surface area: %.4f m^2\n',A_drone);
 fprintf('    Drone body emissivity coefficient of %.2f \n\n',epsilon);
 
 % Heat Loss Rates
