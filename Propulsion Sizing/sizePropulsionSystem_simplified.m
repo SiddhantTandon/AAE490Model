@@ -16,7 +16,7 @@ clear;close all;clc
     solidity = 0.32;                    % Blade Solidity
     k = 1.2;                        % Aerodynamic correction factor
     tipMach = 0.7;                      % Tip Mach Number, chosen to be fixed value
-    Cd_blade_avg = 0.077;               % Average Drag Coefficient for blade
+    Cd_blade_avg = 0.3705;               % Average Drag Coefficient for blade
     blade_radius = 0.65;               % Blade radius [m]
     mass_blades = 8.00;                   % Estimated Mass of all blades [kg]
     A_body = 2;                     % [m^2] Estimated frontal area of vehicle
