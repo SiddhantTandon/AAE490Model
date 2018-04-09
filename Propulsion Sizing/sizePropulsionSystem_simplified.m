@@ -25,9 +25,10 @@ clear;close all;clc
 % Electronics Parameters
     V_batt = 43.7377;                   % Battery voltage [V]
     V_motor = 43.2;                     % Motor Voltage [V]
-    mass_one_ESC = 0.25;                    % Approximate mass of electronic speed controller [kg]
+    mass_one_ESC = 0.25;                % Approximate mass of electronic speed controller [kg]
     motor_eff = 0.85;                   % Efficency factor between mechancial power and electrical power (= P_mech/P_elec)
-    P_avionics = 50;                    % [W] Constant power consumption of computers, avionics, payload, etc. 
+    P_avionics_flight = 45;             % [W] Power consumption of computers, avionics, payload, etc. in flight 
+    P_avionics_ground = 24;             % [W] Power consumption of computers, avionics, payload, etc. on gorund 
 
 % Mission Profile Parameters
     A_cover = pi * 25000^2;     % Required total coverage area [m^2] 
@@ -43,7 +44,7 @@ clear;close all;clc
     beta_accel = 23;            % [deg]  Angle of tilt from horizontal of rotor disk in forward flight
 
 % Solar Flux Parameters 
-    mission_lat = 18;           % [deg] Geographic latitude of the mission on Mars Surface (Range between -90 and 90 deg)
+    mission_lat = 18.86;        % [deg] Geographic latitude of the mission on Mars Surface (Range between -90 and 90 deg)
     solar_lon = 275;            % [deg] (NOT MARTIAN SOLS) Angular position of Mars around the Sun based on time of year (0 deg corresponds to northern vernal equinox)
 
 % Thermal Considerations
@@ -56,7 +57,7 @@ clear;close all;clc
     
 % Factors of Safety
     FoS_elec_motor_power = 1.1;
-    FoS_m_panel = 1.5;
+    FoS_m_panel = 1.4;
     FoS_area_panel = 1.4;
     FoS_cap_batt = 1.3;
 
@@ -151,13 +152,13 @@ clear;close all;clc
     cap_batt_forward = capacityBattery( P_elec_total_forward, V_batt, t_cruise_hr, I_draw); 
     cap_batt_forward_accel = capacityBattery( P_elec_total_forward_accel, V_batt, t_forward_accel_hr, I_draw);   % [A*hr]
     cap_batt_thermal = capacityBattery( Q_dot_on_ground, V_batt, (sol_length_hr- t_flight_hr), I_draw);
-    cap_batt_avionics = capacityBattery( P_avionics, V_batt, sol_length_hr, I_draw);
-    cap_batt = FoS_cap_batt*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel + cap_batt_thermal + cap_batt_avionics);
+    cap_batt_avionics_flight = capacityBattery( P_avionics_flight, V_batt, t_flight_hr, I_draw);
+    cap_batt_avionics_ground = capacityBattery( P_avionics_ground, V_batt, (sol_length_hr - t_flight_hr), I_draw);
+    cap_batt = FoS_cap_batt*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel + cap_batt_thermal + cap_batt_avionics_flight + cap_batt_avionics_ground);
 
 % % Not including thermal and avionics:    
 %    cap_batt = FoS_cap_batt*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel);
-    
-   
+       
    mass_batt = massBattery(cap_batt, V_batt);                          % Mass of the battery required
     
 % Select motor mass based on RimFire Brushless Outrunner Motor specs (https://www.greatplanes.com/motors/gpmg4505.php)
@@ -171,7 +172,7 @@ clear;close all;clc
     elseif  P_elec_one_motor >= 5000 && P_elec_one_motor < 6500 
         mass_motor = 1.48;     % [kg]   6500 W motor mass
     elseif  P_elec_one_motor >= 6500 
-        warning(sprintf('Can not find a RimFire motor to produce this much power!\nMotor mass is estimated from rough correlation.'))
+        warning('Can not find a RimFire motor to produce this much power! Motor mass is estimated from rough correlation.')
         mass_motor = (P_elec_one_motor*7e-5 + 0.2135) * 2;   % Rough correlation for motor mass 
                                                      % ^^^  Multiplied by 2 to achieve a more accurate estimation 
     end  
@@ -180,7 +181,7 @@ clear;close all;clc
     
  % Find solar panel specs   
     energy_batt = cap_batt * V_batt;          % [W*hr]          
-    P_panel = energy_batt / (sun_time);                  % [W]
+    P_panel = 0.7 * energy_batt / (sun_time);   % [W] Multiply by 0.7 to account for the fact that only 70% of the battery's capacity is useful capacity
     [ area_panel, mass_panel ] = sizeSolarPanel(P_panel, solar_flux);  % [kg]
     
     mass_panel = FoS_m_panel*mass_panel; % [kg] Apply factor of safety 
@@ -189,12 +190,10 @@ clear;close all;clc
 
 % Find battery specs
     [voluBat, num_series, num_parallel, total_cells, R] = voluBattery(V_batt,V_motor, P_elec_max, t_flight_min);
-    
     V_batt_chk = I_draw*R + V_motor; %should be equal to V_batt, adjust V_batt to equal V_batt_chk
-    
     excess_heat = P_elec_max/FoS_elec_motor_power - P_mech_max;   % no FoS on this value
-
-    mass_avail = mass_total - mass_batt - mass_blades - mass_all_motors - mass_all_ESC - mass_panel;        % Available mass left over after considering propulsion/power system 
+    
+mass_avail = mass_total - mass_batt - mass_blades - mass_all_motors - mass_all_ESC - mass_panel;        % Available mass left over after considering propulsion/power system 
     
 
 %%%%%%%%%%%%%%%%%%%%%%%% OUTPUT %%%%%%%%%%%%%%%%%%%%%%%
@@ -219,8 +218,6 @@ fprintf('Cruise time of each drone per day: %.2f min\n',t_cruise_min)
 fprintf('Total flight time of each drone per day: %.2f min\n\n',t_flight_min)
 
 % Daily energy budget calculations 
-
-
 E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...            % Total energy required by motors for one flight [J]
                  P_elec_total_climb_accel * t_accel_decel_vert + ...  
                  P_elec_total_descend * t_descend_hr*3600 + ...
@@ -228,10 +225,19 @@ E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...            % Total e
                  P_elec_total_forward * t_cruise_min*60 + ...
                  P_elec_total_forward_accel * t_accel_decel_forward;
 
-E_avionics = P_avionics * (sol_length_hr * 3600);        % Total energy required by computers/avionics for one Sol [J]
+E_avionics = P_avionics_flight*(t_flight_hr)*3600 + P_avionics_flight*(sol_length_hr - t_flight_hr)*3600 ;        % Total energy required by computers/avionics for one Sol [J]
 E_thermal = Q_dot_on_ground * (sol_length_hr- t_flight_hr) * 3600;
+E_batt = energy_batt * 3600;
+E_panels = P_panel * sun_time * 3600;
 
-E_batt = energy_batt * 3600
-E_panels = P_panel * sun_time * 3600
+E_balance = E_panels - (E_total_flight + E_avionics + E_thermal);
 
-E_balance = E_panels - E_total_flight - E_avionics - E_thermal
+fprintf('- - - - - - - - - - - - - - - - - - - - - - - -\nDaily Energy Budget:\n')
+fprintf('                Motors in Flight: %6.3f MJ\n',-E_total_flight/10^6)
+fprintf('Avionics, Sensors, and Computers: %6.3f MJ\n',-E_avionics/10^6)
+fprintf('           Thermal Patch Heating: %6.3f MJ\n',-E_thermal/10^6)
+fprintf('                    Solar Panels: %6.3f MJ\n',E_panels/10^6)
+fprintf('             Total Excess Energy: %6.3f MJ\n\n',E_balance/10^6)
+
+fprintf('Total Energy Capacity of Batteries: %6.3f MJ\n\n',E_batt/10^6)
+
