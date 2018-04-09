@@ -149,8 +149,18 @@ clear;close all;clc
     P_elec_one_motor = P_elec_max/numProp;
     
 % Calculate battery capacity according to each stage in the flight
+    %{
     %%%%%%%%% right now, we are using max current the motors will ever draw
     %%%%%%%%% for each battery capacity.  Is this what is intended?
+    
+    E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...
+                 P_elec_total_climb_accel * t_accel_decel_vert + ...  
+                 P_elec_total_descend * t_descend_hr*3600 + ...
+                 P_elec_total_descend_accel * t_descend_accel_hr*3600 + ...
+                 P_elec_total_forward * t_cruise_min*60 + ...
+                 P_elec_total_forward_accel * t_accel_decel_forward;
+    %}
+             
     cap_batt_climb = capacityBattery( P_elec_total_climb, V_batt, t_climb_hr, I_draw );     % Estimated battery capacity [A*hr]
     cap_batt_climb_accel = capacityBattery( P_elec_total_climb_accel, V_batt, t_climb_accel_hr, I_draw );
     cap_batt_descend = capacityBattery( P_elec_total_descend, V_batt, t_descend_hr, I_draw);     % Estimated battery capacity [A*hr]
