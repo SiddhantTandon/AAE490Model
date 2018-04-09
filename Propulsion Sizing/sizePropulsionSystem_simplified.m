@@ -16,7 +16,9 @@ clear;close all;clc
     solidity = 0.32;                    % Blade Solidity
     k = 1.2;                        % Aerodynamic correction factor
     tipMach = 0.7;                      % Tip Mach Number, chosen to be fixed value
-    Cd_blade_avg = 0.3705;               % Average Drag Coefficient for blade
+    Cd_blade_avg_hover = 0.297;               % Average Drag Coefficient for blade
+    Cd_blade_avg_climb = 0.297;
+    Cd_blade_avg_cruise = 0.338;
     blade_radius = 0.65;               % Blade radius [m]
     mass_blades = 8.00;                   % Estimated Mass of all blades [kg]
     A_body = 2;                     % [m^2] Estimated frontal area of vehicle
@@ -81,16 +83,16 @@ clear;close all;clc
 
  % Power calculations
     % Calculate Power to Hover
-    [fig_merit, P_hover, omega] = Power_Hover(weight_one_rotor, rho_cruise, blade_radius, k, a, tipMach, Cd_blade_avg, solidity);
+    [fig_merit, P_hover, omega] = Power_Hover(weight_one_rotor, rho_cruise, blade_radius, k, a, tipMach, Cd_blade_avg_hover, solidity);
     
     % Caluclate Power to Climb
-    [P_climb, P_climb_accel, omega_climb, t_climb_hr, t_climb_accel_hr] = Power_Climb(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, accel_vert, numProp);
+    [P_climb, P_climb_accel, omega_climb, t_climb_hr, t_climb_accel_hr] = Power_Climb(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg_climb, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, accel_vert, numProp);
 
     % Calculate Power to Descend
-    [P_descend, t_descend_hr, t_descend_accel_hr] = Power_Descend(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, numProp, accel_vert, P_hover);
+    [P_descend, t_descend_hr, t_descend_accel_hr] = Power_Descend(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg_hover, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, numProp, accel_vert, P_hover);
 
     % Calculate Power for Forward Flight
-    [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight_one_rotor, rho_cruise, blade_radius, k, a, tipMach, Cd_blade_avg, solidity, beta_cruise, beta_accel, v_cruise, accel_forward);
+    [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight_one_rotor, rho_cruise, blade_radius, k, a, tipMach, Cd_blade_avg_cruise, solidity, beta_cruise, beta_accel, v_cruise, accel_forward);
     
     % Total Hover Power
     P_mech_total_hover = numProp * P_hover;                         % Multiply power to account for multiple rotors
