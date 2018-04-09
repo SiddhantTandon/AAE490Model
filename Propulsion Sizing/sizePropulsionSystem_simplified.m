@@ -7,7 +7,7 @@ clear;close all;clc
 % other aerodynamic parameters is already known. This script removes the 
 % radiusOpt function to make things more streamlined. 
 
-
+%% Constants & Inputs
 % Vehicle Design Inputs
     mass_total = 60;     % Total vehicle mass including payload [kg] 
 
@@ -58,12 +58,12 @@ clear;close all;clc
     sol_length_hr = 24.6167;        % [hr] number of hours in a Martian Sol
     
 % Factors of Safety
-    FoS_elec_motor_power = 1.1;
-    FoS_m_panel = 1.4;
-    FoS_area_panel = 1.4;
-    FoS_cap_batt = 1.3;
+    FoS_elec_motor_power = 1;%1.1;
+    FoS_m_panel = 1;%1.4;
+    FoS_area_panel = 1;%1.4;
+    FoS_cap_batt = 1;%1.3;
 
-%%%%%%%%%%%%%%%%%%%%%%%% CALCULATIONS %%%%%%%%%%%%%%%%%%%%%%%%
+%% Calculations
 % Preliminary Calculations
     weight_one_rotor =  mass_total * g_m /numProp;  % [N] weight that each rotor must support in hover 
     rho_cruise = rhoMars(h_cruise);        % air density on mars [kg/m^3]
@@ -81,7 +81,7 @@ clear;close all;clc
     t_flight_min = t_cruise_min + t_accel_decel_forward/60 + t_accel_decel_vert/60 + 2*((h_cruise - 0.5*distance_accel_vert)/drone_vert_rate)/60;    % Add fixed number of minutes for climb/descent [min]
     t_flight_hr = t_flight_min/60;    % Convert flight time from [min] to [hr]
 
- % Power calculations
+% Power calculations
     % Calculate Power to Hover
     [fig_merit, P_hover, omega] = Power_Hover(weight_one_rotor, rho_cruise, blade_radius, k, a, tipMach, Cd_blade_avg_hover, solidity);
     
@@ -90,7 +90,8 @@ clear;close all;clc
 
     % Calculate Power to Descend
     [P_descend, t_descend_hr, t_descend_accel_hr] = Power_Descend(weight_one_rotor, rho_vert, blade_radius, a, tipMach, Cd_blade_avg_hover, solidity, drone_vert_rate, h_cruise, A_body, Cd_body, numProp, accel_vert, P_hover);
-
+    %%%%%%%%% P_descend_accel
+    
     % Calculate Power for Forward Flight
     [P_forward, P_forward_accel, t_forward_accel_hr] = Power_Forward_Flight(weight_one_rotor, rho_cruise, blade_radius, k, a, tipMach, Cd_blade_avg_cruise, solidity, beta_cruise, beta_accel, v_cruise, accel_forward);
     
@@ -138,6 +139,7 @@ clear;close all;clc
     torque = P_mech_total_climb/omega_climb;
     
     % NEED TOTAL or MAX?
+    % Determines maximum power the motor will ever have to draw
     P_mech_max = max([P_mech_total_hover, P_mech_total_climb, P_mech_total_descend, P_mech_total_forward, P_mech_total_climb_accel, P_mech_total_descend_accel, P_mech_total_forward_accel]);
     P_elec_max = P_mech_max/motor_eff * FoS_elec_motor_power;
     I_draw = P_elec_max/V_motor;  % Current thru motor [Amps]
@@ -147,6 +149,8 @@ clear;close all;clc
     P_elec_one_motor = P_elec_max/numProp;
     
 % Calculate battery capacity according to each stage in the flight
+    %%%%%%%%% right now, we are using max current the motors will ever draw
+    %%%%%%%%% for each battery capacity.  Is this what is intended?
     cap_batt_climb = capacityBattery( P_elec_total_climb, V_batt, t_climb_hr, I_draw );     % Estimated battery capacity [A*hr]
     cap_batt_climb_accel = capacityBattery( P_elec_total_climb_accel, V_batt, t_climb_accel_hr, I_draw );
     cap_batt_descend = capacityBattery( P_elec_total_descend, V_batt, t_descend_hr, I_draw);     % Estimated battery capacity [A*hr]
@@ -198,7 +202,7 @@ clear;close all;clc
 mass_avail = mass_total - mass_batt - mass_blades - mass_all_motors - mass_all_ESC - mass_panel;        % Available mass left over after considering propulsion/power system 
     
 
-%%%%%%%%%%%%%%%%%%%%%%%% OUTPUT %%%%%%%%%%%%%%%%%%%%%%%
+%% Output
 fprintf('Total mass of single drone (Input): %.1f kg\n',mass_total)
 fprintf('Mass available for structure, payload, and avionics: %.2f kg\n',mass_avail)
 fprintf('Percent Mass available: %.2f%%\n', 100*(mass_avail/mass_total));
@@ -219,7 +223,7 @@ fprintf('Required heat dissipation for all motors: %.0f W\n',excess_heat)
 fprintf('Cruise time of each drone per day: %.2f min\n',t_cruise_min)
 fprintf('Total flight time of each drone per day: %.2f min\n\n',t_flight_min)
 
-% Daily energy budget calculations 
+%% Daily Energy Budget
 E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...            % Total energy required by motors for one flight [J]
                  P_elec_total_climb_accel * t_accel_decel_vert + ...  
                  P_elec_total_descend * t_descend_hr*3600 + ...
@@ -227,7 +231,7 @@ E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...            % Total e
                  P_elec_total_forward * t_cruise_min*60 + ...
                  P_elec_total_forward_accel * t_accel_decel_forward;
 
-E_avionics = P_avionics_flight*(t_flight_hr)*3600 + P_avionics_flight*(sol_length_hr - t_flight_hr)*3600 ;        % Total energy required by computers/avionics for one Sol [J]
+E_avionics = P_avionics_flight*(t_flight_hr)*3600 + P_avionics_ground*(sol_length_hr - t_flight_hr)*3600 ;        % Total energy required by computers/avionics for one Sol [J]
 E_thermal = Q_dot_on_ground * (sol_length_hr- t_flight_hr) * 3600;
 E_batt = energy_batt * 3600;
 E_panels = P_panel * sun_time * 3600;
@@ -235,11 +239,11 @@ E_panels = P_panel * sun_time * 3600;
 E_balance = E_panels - (E_total_flight + E_avionics + E_thermal);
 
 fprintf('- - - - - - - - - - - - - - - - - - - - - - - -\nDaily Energy Budget:\n')
-fprintf('                Motors in Flight: %6.3f MJ\n',-E_total_flight/10^6)
-fprintf('Avionics, Sensors, and Computers: %6.3f MJ\n',-E_avionics/10^6)
-fprintf('           Thermal Patch Heating: %6.3f MJ\n',-E_thermal/10^6)
-fprintf('                    Solar Panels: %6.3f MJ\n',E_panels/10^6)
-fprintf('             Total Excess Energy: %6.3f MJ\n\n',E_balance/10^6)
+fprintf('                Motors in Flight: %6.3f MJ\n', -E_total_flight/10^6)
+fprintf('Avionics, Sensors, and Computers: %6.3f MJ\n', -E_avionics/10^6)
+fprintf('           Thermal Patch Heating: %6.3f MJ\n', -E_thermal/10^6)
+fprintf('                    Solar Panels: %6.3f MJ\n', E_panels/10^6)
+fprintf('             Total Excess Energy: %6.3f MJ\n\n', E_balance/10^6)
 
-fprintf('Total Energy Capacity of Batteries: %6.3f MJ\n\n',E_batt/10^6)
+fprintf('Total Energy Capacity of Batteries: %6.3f MJ\n\n', E_batt/10^6)
 

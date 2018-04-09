@@ -31,7 +31,7 @@ fileName = '4_4_test3.txt';
 data = dlmread(fileName, '\t', 1, 0);
 
 time = data(:, 114); %[s]
-throttlePosition = data(:, 12); % reading from throttle [?]
+throttlePosition = data(:, 12); %reading from throttle [?]
 powerDraw = data(:, 30); %[W]
 voltage = data(:, 26); %[V]
 current = data(:, 28); %[A] current reading doesn't work
@@ -157,8 +157,6 @@ voltageAccel = voltage(accelIndices);
 currentAccel = current(accelIndices);
 rotRateAccel = rotRate(accelIndices);
 
-rotRateAccel = rotRateAccel / polesMotor;
-
 omegaAccel = 2 * pi * rotRateAccel / 60; %rotation rate [rad/s]
 
 torqueAccel = zeros(length(powerDrawAccel), 1);
@@ -229,3 +227,6 @@ title('Torque vs. t')
 
 figure(7)
 plot(Iz)
+
+figure(8)
+plot(throttlePosition)
