@@ -33,14 +33,3 @@ Q_dot_isotherm = 4 * A_one_fin * sigma * T_fin^4    % [W] Simplified Const. Temp
 
 Q_dot_fin = 4 * 2*k*t_fin*L_fin * (sigma * epsilon/(5 * k * t_fin))^0.5 * (T_fin^5 - T_env^5)^0.5    % [W] Heat transfer rate using fin equation 
 
-
-
-
-
-
-
-
-
-
-
-
