@@ -197,8 +197,46 @@ clear;close all;clc
     [voluBat, num_series, num_parallel, total_cells, R] = voluBattery(V_batt, energy_batt);
     V_batt_chk = I_draw*R + V_motor; %should be equal to V_batt, adjust V_batt to equal V_batt_chk
     excess_heat = P_elec_max/FoS_elec_motor_power - P_mech_max;   % no FoS on this value
-        
-%% Daily Energy Budget Calculations
+    
+mass_avail = mass_total - mass_batt - mass_blades - mass_all_motors - mass_all_ESC - mass_panel;        % Available mass left over after considering propulsion/power system 
+    
+
+%% PCM Sizing
+
+    E_waste_motor = E_total_flight / FoS_elec_motor_power; % [J] Energy waste from all motors
+    %%%%%%%%%%%%%%%%%%%%
+    %UPDATE BATTERY ENERGY WASTE
+    E_waste_battery = 200 * t_flight_min * 60; % [J] Energy waste from batteries
+    %%%%%%%%%%%%%%%%%%
+    
+    [PCM, m_PCM_motor, m_PCM_struc_motor, V_PCM_motor, percent_V_change] = PCMSizing(E_waste_motor, T_motor_min, T_motor_max);
+    [~, m_PCM_battery, m_PCM_struc_battery, V_PCM_battery, ~] = PCMSizing(E_waste_battery, T_battery_min, T_battery_max);
+    
+    m_cooling = m_PCM_motor + m_PCM_battery + m_PCM_struc_motor + m_PCM_struc_battery;
+    
+    
+%% Output
+fprintf('Total mass of single drone (Input): %.1f kg\n',mass_total)
+fprintf('Mass available for structure, payload, and avionics: %.2f kg\n',mass_avail)
+fprintf('Percent Mass available: %.2f%%\n', 100*(mass_avail/mass_total));
+fprintf('Mass of all batteries: %.2f kg\n',mass_batt)
+fprintf('Mass of all motors: %.2f kg\n',mass_all_motors)
+fprintf('Mass of all rotor blades: %.2f kg\n',mass_blades)
+fprintf('Mass of all solar panels: %.2f kg\n',mass_panel)
+fprintf('Area of all solar panels: %.2f m^2\n',area_panel)
+fprintf('Volume of Battery: %.5f m^3\n', voluBat);
+fprintf('Number of battery cells in parallel: %.0f cells\n', num_parallel);
+fprintf('Number of battery cells in series: %.0f cells\n', num_series);
+fprintf('Radius of each rotor: %.3f m\n',blade_radius)
+fprintf('Figure of Merit of Rotor: %.3f \n',fig_merit);
+fprintf('Max mechanical power required from one motor: %.0f W\n',P_mech_one_motor)
+fprintf('Max electrical power required by one motor with FoS: %.0f W\n',P_elec_one_motor)
+fprintf('Max rotation rate required from motor: %.0f RPM\n',max([omega omega_climb]*60/(2*pi)))
+fprintf('Required heat dissipation for all motors: %.0f W\n',excess_heat)
+fprintf('Cruise time of each drone per day: %.2f min\n',t_cruise_min)
+fprintf('Total flight time of each drone per day: %.2f min\n\n',t_flight_min)
+
+%% Daily Energy Budget
 E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...            % Total energy required by motors for one flight [J]
                  P_elec_total_climb_accel * t_climb_accel_hr*3600 + ...  
                  P_elec_total_descend * t_descend_hr*3600 + ...
@@ -213,49 +251,6 @@ E_panels = P_panel * sun_time * 3600;
 
 E_balance = E_panels - (E_total_flight + E_avionics + E_thermal);
 
-
-%% PCM Sizing Calcuations
-
-    E_waste_motor = E_total_flight * (1 - motor_eff); % [J] Energy waste from all motors
-    %%%%%%%%%%%%%%%%%%%%
-    %UPDATE BATTERY ENERGY WASTE
-    E_waste_battery = 200 * t_flight_min * 60; % [J] Energy waste from batteries
-    %%%%%%%%%%%%%%%%%%
-    
-    [PCM, m_PCM_motor, m_PCM_struc_motor, V_PCM_motor, percent_V_change] = PCMSizing(E_waste_motor, T_motor_min, T_motor_max);
-    [~, m_PCM_battery, m_PCM_struc_battery, V_PCM_battery, ~] = PCMSizing(E_waste_battery, T_batt_min, T_batt_max);
-    
-    mass_cooling = m_PCM_motor + m_PCM_battery + m_PCM_struc_motor + m_PCM_struc_battery;
-    
-
-%% Total Available Mass
-mass_avail = mass_total - mass_batt - mass_blades - mass_all_motors - mass_all_ESC - mass_panel - mass_cooling;        % Available mass left over after considering propulsion/power system 
-
-%% Output
-
-% General Outputs
-fprintf('Total mass of single drone (Input): %.1f kg\n',mass_total)
-fprintf('Mass available for structure, payload, and avionics: %.2f kg\n',mass_avail)
-fprintf('Percent Mass available: %.2f%%\n', 100*(mass_avail/mass_total));
-fprintf('Mass of all batteries: %.2f kg\n',mass_batt)
-fprintf('Mass of all motors: %.2f kg\n',mass_all_motors)
-fprintf('Mass of all rotor blades: %.2f kg\n',mass_blades)
-fprintf('Mass of all solar panels: %.2f kg\n',mass_panel)
-fprintf('Mass of all PCM Cooling: %.2f kg\n',mass_cooling)
-fprintf('Area of all solar panels: %.2f m^2\n',area_panel)
-fprintf('Volume of Battery: %.5f m^3\n', voluBat);
-fprintf('Number of battery cells in parallel: %.0f cells\n', num_parallel);
-fprintf('Number of battery cells in series: %.0f cells\n', num_series);
-fprintf('Radius of each rotor: %.3f m\n',blade_radius)
-fprintf('Figure of Merit of Rotor: %.3f \n',fig_merit);
-fprintf('Max mechanical power required from one motor: %.0f W\n',P_mech_one_motor)
-fprintf('Max electrical power required by one motor with FoS: %.0f W\n',P_elec_one_motor)
-fprintf('Max rotation rate required from motor: %.0f RPM\n',max([omega omega_climb]*60/(2*pi)))
-fprintf('Required heat dissipation for all motors: %.0f W\n',excess_heat)
-fprintf('Cruise time of each drone per day: %.2f min\n',t_cruise_min)
-fprintf('Total flight time of each drone per day: %.2f min\n\n',t_flight_min)
-
-% Energy Budget Outputs
 fprintf('- - - - - - - - - - - - - - - - - - - - - - - -\nDaily Energy Budget:\n')
 fprintf('                Motors in Flight: %6.3f MJ\n', -E_total_flight/10^6)
 fprintf('Avionics, Sensors, and Computers: %6.3f MJ\n', -E_avionics/10^6)
@@ -265,12 +260,16 @@ fprintf('             Total Excess Energy: %6.3f MJ\n\n', E_balance/10^6)
 
 fprintf('Total Energy Capacity of Batteries: %6.3f MJ\n\n', E_batt/10^6)
 
-% Phase Change Outputs
+m_PCM_motor + m_PCM_battery + m_PCM_struc_motor + m_PCM_struc_battery;
+ [PCM, m_PCM_motor, m_PCM_struc_motor, V_PCM_motor, percent_V_change]
+    [~, m_PCM_battery, m_PCM_struc_battery, V_PCM_battery, ~]
 fprintf('- - - - - - - - - - - - - - - - - - - - - - - -\nPhase Change Materials:\n')
 fprintf('Material: %s\n', PCM);
 fprintf('Total Mass of PCM: %.2f kg\n', m_PCM_motor + m_PCM_battery);
 fprintf('Approximate Mass of Additional Structure: %.2f kg\n', m_PCM_struc_motor + m_PCM_struc_battery);
-fprintf('Approximate Total Mass: %.2f kg\n', mass_cooling);
-fprintf('Volume of Motor PCM: %.2f [L] (liquid)\n', V_PCM_motor * 1000)
-fprintf('Volume of Battery PCM: %.2f [L] (liquid)\n', V_PCM_battery * 1000)
-fprintf('Percentage change in volume: %.2f%%\n', percent_V_change*100)
+fprintf('Approximate Total Mass: %.2f kg\n', m_cooling);
+fprintf('Volume of Battery PCM: %.2f [L] (liquid)\n', V_liquid * 1000)
+else 
+    fprintf('Maximum Volume of PCM: %.2f [L] (solid)\n', V_solid * 1000)
+end
+fprintf('Percentage change in volume: %.2f%%\n', percent_vol_change*100)
