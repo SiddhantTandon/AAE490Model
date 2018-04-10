@@ -8,15 +8,15 @@ n = 2; %index of PCM material for analysis
 SF = 1.2; %safety factor applied to final mass
 
 % Motor Operational Specifications
-T_motor_max = 110; %maximum allowable motor temperature [C] (30 for batteries)
+T_motor_max = 100; %maximum allowable motor temperature [C] (30 for batteries)
 T_motor_min = -20; %minimum allowable motor temperature (0 for batteries)
-t = 10 * 60; %flight time [s]
+t = 9.1 * 60; %flight time [s]
 
 % Environmental Constants
 T_mars = 0; %ambient temperature on Mars [C]
 
 % Motor Specifications
-P_waste = 650; %Set power lost by 1 motor for consistancy [W] (200 for battieres)
+P_waste = 800; %Set power lost by 1 motor for consistancy [W] (200 for battieres)
 E_waste = P_waste * t;
 
 T_mars = T_mars + 273.15; %convert to K

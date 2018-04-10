@@ -212,7 +212,7 @@ fprintf('Number of battery cells in series: %.0f cells\n', num_series);
 fprintf('Radius of each rotor: %.3f m\n',blade_radius)
 fprintf('Figure of Merit of Rotor: %.3f \n',fig_merit);
 fprintf('Max mechanical power required from one motor: %.0f W\n',P_mech_one_motor)
-fprintf('Max electrical power required by one motor: %.0f W\n',P_elec_one_motor)
+fprintf('Max electrical power required by one motor with FoS: %.0f W\n',P_elec_one_motor)
 fprintf('Max rotation rate required from motor: %.0f RPM\n',max([omega omega_climb]*60/(2*pi)))
 fprintf('Required heat dissipation for all motors: %.0f W\n',excess_heat)
 fprintf('Cruise time of each drone per day: %.2f min\n',t_cruise_min)
