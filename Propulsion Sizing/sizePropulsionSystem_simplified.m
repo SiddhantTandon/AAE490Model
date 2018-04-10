@@ -190,7 +190,7 @@ clear;close all;clc
 
 
 % Find battery specs
-    [voluBat, num_series, num_parallel, total_cells, R] = voluBattery(V_batt,V_motor, energy_batt);
+    [voluBat, num_series, num_parallel, total_cells, R] = voluBattery(V_batt, energy_batt);
     V_batt_chk = I_draw*R + V_motor; %should be equal to V_batt, adjust V_batt to equal V_batt_chk
     excess_heat = P_elec_max/FoS_elec_motor_power - P_mech_max;   % no FoS on this value
     

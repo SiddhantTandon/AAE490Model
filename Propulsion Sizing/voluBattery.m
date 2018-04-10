@@ -1,4 +1,4 @@
-function [ volume_batt, num_series, num_parallel2, total_cells, R ] = voluBattery(V_batt, V_motor, energy_batt)
+function [ volume_batt, num_series, num_parallel2, total_cells, R ] = voluBattery(V_batt, energy_batt)
 %
 % Description: 
 %   Calculate the volume of the resultant battery system based on the
@@ -7,7 +7,7 @@ function [ volume_batt, num_series, num_parallel2, total_cells, R ] = voluBatter
 % Inputs:
 %   V_batt - voltage of the battery 
 %   V_motor - Voltage of the motor
-%   energy_batt - Total energy required by battery [W*hr]
+%   energy_batt - Total energy required by battery (includes the 70% usable capacity factor) [W*hr]
 %
 % Outputs:
 %   volume_batt - volume of the resultant battery system
@@ -16,16 +16,14 @@ function [ volume_batt, num_series, num_parallel2, total_cells, R ] = voluBatter
 %   total_cells - totall number of battery cells in resulting configuration
 %   R - Internal resistance of total battery given internal resistance of one cell
 
-discharge_percent = 0.7;
-cap_ = 3; %AH
+
+cap_cell = 3; %AH
 E_req = energy_batt * 3600; % [W]*[hr]* 3600[s/hr] = W*s = J
-%For a 12S battery cell:
-%S = 12;
+
 V_mean = 3.6; %[V]
-%V_batt_mean = S*V_mean; %[V] Voltage of the resulting battery
 num_series = ceil(V_batt/V_mean); %number of cells in series, round up
-numJ = V_mean*num_series*cap_*3600; %[V]*[number in series]*[A*hr]*[s/hr] = [W*hr]*[s/hr] = [W*s] = [J]
-num_parallel2 = ceil((E_req/discharge_percent)/numJ);
+numJ = V_mean*num_series*cap_cell*3600; %[V]*[number in series]*[A*hr]*[s/hr] = [W*hr]*[s/hr] = [W*s] = [J]
+num_parallel2 = ceil((E_req)/numJ);
 total_cells = num_series*num_parallel2;
 
 %Battery Resistance
