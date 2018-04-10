@@ -216,13 +216,13 @@ E_balance = E_panels - (E_total_flight + E_avionics + E_thermal);
 
 %% PCM Sizing Calcuations
 
-    E_waste_motor = E_total_flight * (1 - motor_eff); % [J] Energy waste from all motors
+    E_waste_motors = E_total_flight * (1 - motor_eff); % [J] Energy waste from all motors
     %%%%%%%%%%%%%%%%%%%%
     %UPDATE BATTERY ENERGY WASTE
     E_waste_battery = 200 * t_flight_min * 60; % [J] Energy waste from batteries
     %%%%%%%%%%%%%%%%%%
     
-    [PCM, m_PCM_motor, m_PCM_struc_motor, V_PCM_motor, percent_V_change] = PCMSizing(E_waste_motor, T_motor_min, T_motor_max);
+    [PCM, m_PCM_motor, m_PCM_struc_motor, V_PCM_motor, percent_V_change] = PCMSizing(E_waste_motors, T_motor_min, T_motor_max);
     [~, m_PCM_battery, m_PCM_struc_battery, V_PCM_battery, ~] = PCMSizing(E_waste_battery, T_batt_min, T_batt_max);
     
     mass_cooling = m_PCM_motor + m_PCM_battery + m_PCM_struc_motor + m_PCM_struc_battery;
@@ -268,6 +268,12 @@ fprintf('Total Energy Capacity of Batteries: %6.3f MJ\n\n', E_batt/10^6)
 % Phase Change Outputs
 fprintf('- - - - - - - - - - - - - - - - - - - - - - - -\nPhase Change Materials:\n')
 fprintf('Material: %s\n', PCM);
+fprintf('Mass of PCM for Motors: %.2f kg\n', m_PCM_motor);
+fprintf('Mass of PCM Structure for Motors: %.2f kg\n', m_PCM_struc_motor);
+fprintf('Total Mass for Motors: %.2f kg\n', m_PCM_motor + m_PCM_struc_motor);
+fprintf('Mass of PCM for Batteries: %.2f kg\n', m_PCM_battery);
+fprintf('Mass of PCM Structure for Batteries: %.2f kg\n', m_PCM_struc_battery);
+fprintf('Total Mass for Batteries: %.2f kg\n', m_PCM_battery + m_PCM_struc_battery);
 fprintf('Total Mass of PCM: %.2f kg\n', m_PCM_motor + m_PCM_battery);
 fprintf('Approximate Mass of Additional Structure: %.2f kg\n', m_PCM_struc_motor + m_PCM_struc_battery);
 fprintf('Approximate Total Mass: %.2f kg\n', mass_cooling);
