@@ -23,7 +23,7 @@ Irrelevant variables:
 % Environmental Constants
 sigma = 5.67e-8; %Stefan-Boltzmann Constant [W/m^2*K^4]
 
-v_freestream = 26.8; %maximum expected freestream velocity at the surface
+v_freestream = 26.8; % [m/s] maximum expected freestream velocity at the surface
 T_mars = -100; %minimum ambient temperature on Mars [C]
 c_p = 730; %specific heat capacity Mars atmosphere [m/s^2*K]
 rho = 0.0139; %atmospheric density [kg/m^3]
@@ -43,8 +43,8 @@ T_drone = T_drone + 273.15; %convert to K
 
 
 %Drone Surface Area
-r = 0.1; %drone core radius [m]
-h_drone = 0.1; %drone core height [m]
+r = 0.125; %drone core radius [m]
+h_drone = 0.108; %drone core height [m]
 A_drone = pi * r ^ 2 * 2 + 2 * r * pi * h_drone;
 
 %% Possible Heat Transfer Characteristics

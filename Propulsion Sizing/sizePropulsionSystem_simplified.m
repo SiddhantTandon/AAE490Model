@@ -50,7 +50,7 @@ clear;close all;clc
     solar_lon = 275;            % [deg] (NOT MARTIAN SOLS) Angular position of Mars around the Sun based on time of year (0 deg corresponds to northern vernal equinox)
 
 % Thermal Considerations
-    Q_dot_on_ground = 15;  % [W] Constant electrical heating required for components, etc. 
+    Q_dot_on_ground = 20;  % [W] Constant electrical heating required for components, etc. 
     
 % Constants
     a = 240;                        % speed of sound, m/s
@@ -58,10 +58,10 @@ clear;close all;clc
     sol_length_hr = 24.6167;        % [hr] number of hours in a Martian Sol
     
 % Factors of Safety
-    FoS_elec_motor_power = 1;%1.1;
-    FoS_m_panel = 1;%1.4;
-    FoS_area_panel = 1;%1.4;
-    FoS_cap_batt = 1;%1.3;
+    FoS_elec_motor_power = 1.1;
+    FoS_m_panel = 1.4;
+    FoS_area_panel = 1.4;
+    FoS_cap_batt = 1.3;
 
 %% Calculations
 % Preliminary Calculations
@@ -148,19 +148,7 @@ clear;close all;clc
     P_mech_one_motor = P_mech_max/numProp;    % Caculate mech. and elec. powers per motor [W]
     P_elec_one_motor = P_elec_max/numProp;
     
-% Calculate battery capacity according to each stage in the flight
-    %{
-    %%%%%%%%% right now, we are using max current the motors will ever draw
-    %%%%%%%%% for each battery capacity.  Is this what is intended?
-    
-    E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...
-                 P_elec_total_climb_accel * t_accel_decel_vert + ...  
-                 P_elec_total_descend * t_descend_hr*3600 + ...
-                 P_elec_total_descend_accel * t_descend_accel_hr*3600 + ...
-                 P_elec_total_forward * t_cruise_min*60 + ...
-                 P_elec_total_forward_accel * t_accel_decel_forward;
-    %}
-             
+% Calculate battery capacity according to each stage in the flight     
     cap_batt_climb = capacityBattery( P_elec_total_climb, V_batt, t_climb_hr, I_draw );     % Estimated battery capacity [A*hr]
     cap_batt_climb_accel = capacityBattery( P_elec_total_climb_accel, V_batt, t_climb_accel_hr, I_draw );
     cap_batt_descend = capacityBattery( P_elec_total_descend, V_batt, t_descend_hr, I_draw);     % Estimated battery capacity [A*hr]
@@ -171,11 +159,8 @@ clear;close all;clc
     cap_batt_avionics_flight = capacityBattery( P_avionics_flight, V_batt, t_flight_hr, I_draw);
     cap_batt_avionics_ground = capacityBattery( P_avionics_ground, V_batt, (sol_length_hr - t_flight_hr), I_draw);
     cap_batt = FoS_cap_batt*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel + cap_batt_thermal + cap_batt_avionics_flight + cap_batt_avionics_ground);
-
-% % Not including thermal and avionics:    
-%    cap_batt = FoS_cap_batt*(cap_batt_forward + cap_batt_climb + cap_batt_climb_accel + cap_batt_descend + cap_batt_descend_accel + cap_batt_forward_accel);
-       
-   mass_batt = massBattery(cap_batt, V_batt);                          % Mass of the battery required
+          
+    mass_batt = massBattery(cap_batt, V_batt);                          % Mass of the battery required
     
 % Select motor mass based on RimFire Brushless Outrunner Motor specs (https://www.greatplanes.com/motors/gpmg4505.php)
     if  P_elec_one_motor < 1800   
@@ -235,7 +220,7 @@ fprintf('Total flight time of each drone per day: %.2f min\n\n',t_flight_min)
 
 %% Daily Energy Budget
 E_total_flight = P_elec_total_climb * t_climb_hr*3600 + ...            % Total energy required by motors for one flight [J]
-                 P_elec_total_climb_accel * t_accel_decel_vert + ...  
+                 P_elec_total_climb_accel * t_climb_accel_hr*3600 + ...  
                  P_elec_total_descend * t_descend_hr*3600 + ...
                  P_elec_total_descend_accel * t_descend_accel_hr*3600 + ...
                  P_elec_total_forward * t_cruise_min*60 + ...
