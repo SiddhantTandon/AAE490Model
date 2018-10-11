@@ -9,6 +9,8 @@ function [ m ] = motorMass( T_req, P_elec_one_motor, num_prop )
 %% Outputs
 % m                - Mass of all motors [kg]
 
+%---Begin Code---
+
 %% Method #1
 % From "Predicting Motor and Generator Maximum Torque as a Function of
 % Mass", Without knowing the required T, the accuracy of this estimation is
@@ -21,6 +23,8 @@ m_one_motor = (T_req / MNT) ^ (1 / alpha);
 m = num_prop * m_one_motor;
 
 %% Method #2
+% Infers the mass of the motors based on Rimfire Brushless Outrunner Motor
+% Specifications.
 if  P_elec_one_motor < 1800   
     m_motor = (P_elec_one_motor*7e-5 + 0.2135) * 2;   % Rough correlation for motor mass 
 elseif  P_elec_one_motor >= 1800 && P_elec_one_motor < 2500
@@ -35,5 +39,7 @@ elseif  P_elec_one_motor >= 6500
 end  
 
 m = m_motor * numProp;
+
+%---End Code---
 
 end

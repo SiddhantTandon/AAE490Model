@@ -1,4 +1,4 @@
-function [ Q_dot, E_req_flight ] = Motor( t )
+function [ Q_dot, E_req_flight, m_all_motors ] = Motor( t )
 %% Description
 % Determines motor sizing and performance metrics
  
@@ -30,6 +30,9 @@ P = [P_climb P_descend P_forward P_hover];
 P_mech = numProp * P;                  
 P_elec = P_mech / motor_eff;
 Q_dot = P_elec * (1 - motor_eff); % Assuming all extra power is converted to heat.
+
+% Motor Mass
+m_all_motors = motorMass( T_req, P_elec_one_motor, num_prop );
 
 % Total Energy Required
 E_req_flight = dot(P_elec, t);
