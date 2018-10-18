@@ -1,8 +1,6 @@
-clc
-clear
+clc; clear; 
 % Import data file as matrix 'airfoil'
-airfoil = dlmread('NACA 4404 Data.txt');
-airfoil = airfoil';
+airfoil = dlmread('NACA 4404 Data.txt')';
  
 % Input Variables
 sections = 6; % number of sections the blade is divided into
@@ -47,6 +45,7 @@ success_blades = [];
 z = 0;
 % Iterate through blade radii
 for r = 0.48 % tested radius
+    fprintf('Start Loop..\n')
     r_min = 0.1 * r; % point where blade starts from center
     cs = (r/2)/sections * base_cs; % matrix of all chord combos
     A_disk = pi*r^2; % Area of disk
