@@ -1,4 +1,4 @@
-function [ m ] = motorMass( T_req, P_elec_one_motor, num_prop )
+function [ m ] = motorMass( T_req, P_elec_one_motor, numProp )
 %% Description
 % This code takes in the requirements of the motor and estimates the mass of all four.
 %% Inputs
@@ -20,7 +20,7 @@ MNT = 0.02;  % Mass Normalized Torque
 alpha = 1.5;
 
 m_one_motor = (T_req / MNT) ^ (1 / alpha);
-m = num_prop * m_one_motor;
+m = numProp * m_one_motor;
 
 %% Method #2
 % Infers the mass of the motors based on Rimfire Brushless Outrunner Motor
